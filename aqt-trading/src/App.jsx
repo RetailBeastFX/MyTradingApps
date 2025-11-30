@@ -198,7 +198,7 @@ const LandingPage = ({ onEnterApp }) => {
 };
 
 // ==========================================
-// 2. DASHBOARD / APP COMPONENT
+// 2. DASHBOARD / APP COMPONENT 
 // ==========================================
 
 // --- CONSTANTS ---
@@ -345,16 +345,14 @@ const Dashboard = () => {
     await updateDoc(doc(db, 'users', user.uid), { balance: roundToTwo(balance - t.pnl) });
   };
 
-  const handleUpgrade = async () => {
-    if(!user) return;
-    await updateSetting('isPremium', true);
-    setShowPaywall(false);
-    alert("Welcome to Pro! Account upgraded.");
+  const handleUpgrade = () => {
+    // Redirect to Stripe $9/month Subscription
+    window.location.href = "https://buy.stripe.com/test_28E7sL6taeBs7sn7gX8Zq00"; 
   };
 
   const setupPerformance = useMemo(() => {
     if (!isPremium) return [];
-    return TRADE_SETUPS.map(s => {
+    return TRADE_SETUPS.map(s =>a {
       const related = trades.filter(t => t.setup === s);
       if(related.length === 0) return null;
       const w = related.filter(t => t.pnl > 0).length;
