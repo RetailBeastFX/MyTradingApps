@@ -79,7 +79,12 @@ const LandingPage = ({ onEnterApp }) => {
                 </button>
               </div>
               <div className="text-sm text-blue-300/60 mt-4">No credit card required • Instant access</div>
-            </div>
+
+              {/* Feature Graphic (place feature-graphic.jpg in public/) */}
+              <div className="mt-6 flex justify-center">
+                <img src="/feature-graphic.jpg" alt="AQT Feature Graphic" className="w-full max-w-md rounded-2xl shadow-xl" />
+              </div>
+
 
             {/* Social Proof */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
