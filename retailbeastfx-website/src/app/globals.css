@@ -1,0 +1,435 @@
+@import "tailwindcss";
+
+/* ============================================
+   RetailBeastFX Marketing Website - Cyberpunk Theme
+   ============================================ */
+
+/* Theme Configuration for TailwindCSS v4 */
+@theme inline {
+  /* Fonts */
+  --font-orbitron: 'Orbitron', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Core Cyberpunk Colors */
+  --color-beast-black: #000000;
+  --color-beast-black-50: #1E1E1E;
+  --color-beast-black-100: #121212;
+  --color-beast-black-200: #0A0A0A;
+
+  /* Neon Green */
+  --color-beast-green: #00E676;
+  --color-beast-green-50: #E8FFF3;
+  --color-beast-green-100: #B9FFD8;
+  --color-beast-green-200: #69FFAE;
+  --color-beast-green-300: #00FF88;
+  --color-beast-green-400: #00E676;
+  --color-beast-green-500: #00C853;
+  --color-beast-green-600: #00A844;
+  --color-beast-green-glow: rgba(0, 230, 118, 0.5);
+
+  /* Bearish Red */
+  --color-beast-red: #FF5252;
+  --color-beast-red-50: #FFE8E8;
+  --color-beast-red-100: #FFBABA;
+  --color-beast-red-200: #FF8A8A;
+  --color-beast-red-300: #FF5252;
+  --color-beast-red-400: #FF1744;
+  --color-beast-red-glow: rgba(255, 82, 82, 0.5);
+
+  /* Gold/Wins */
+  --color-beast-gold: #FFD700;
+  --color-beast-gold-50: #FFFCE8;
+  --color-beast-gold-100: #FFF4B8;
+  --color-beast-gold-200: #FFEA70;
+  --color-beast-gold-300: #FFD700;
+  --color-beast-gold-glow: rgba(255, 215, 0, 0.5);
+
+  /* Cyber Surface Colors */
+  --color-cyber-dark: #0f0f0f;
+  --color-cyber-surface: #1a1a2e;
+  --color-cyber-card: #16213e;
+  --color-cyber-border: #0f3460;
+
+  /* Theme variables */
+  --color-background: #000000;
+  --color-foreground: #ededed;
+
+  /* Shadows */
+  --shadow-neon-green: 0 0 5px rgba(0, 230, 118, 0.3), 0 0 10px rgba(0, 230, 118, 0.2), 0 0 20px rgba(0, 230, 118, 0.1);
+  --shadow-neon-green-lg: 0 0 10px rgba(0, 230, 118, 0.4), 0 0 20px rgba(0, 230, 118, 0.3), 0 0 40px rgba(0, 230, 118, 0.2);
+  --shadow-neon-red: 0 0 5px rgba(255, 82, 82, 0.3), 0 0 10px rgba(255, 82, 82, 0.2);
+  --shadow-neon-gold: 0 0 5px rgba(255, 215, 0, 0.3), 0 0 10px rgba(255, 215, 0, 0.2);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Custom animations */
+  --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-bounce-subtle: bounce-subtle 2s ease-in-out infinite;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(180deg, #000000 0%, #0a0a0a 50%, #0f0f0f 100%);
+  color: var(--color-foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+/* ============================================
+   Keyframe Animations
+   ============================================ */
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 230, 118, 0.3), 0 0 10px rgba(0, 230, 118, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 230, 118, 0.6), 0 0 30px rgba(0, 230, 118, 0.4), 0 0 40px rgba(0, 230, 118, 0.2);
+  }
+}
+
+@keyframes neon-flicker {
+  0% { opacity: 1; }
+  50% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+@keyframes slide-up {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  0% { opacity: 0; transform: translateX(20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes confetti-burst {
+  0% { transform: scale(0) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1) rotate(360deg); opacity: 0; }
+}
+
+@keyframes mascot-wave {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes text-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* ============================================
+   Animation Utility Classes
+   ============================================ */
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.animate-neon-flicker {
+  animation: neon-flicker 0.5s ease-in-out infinite alternate;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+.animate-mascot-wave {
+  animation: mascot-wave 1s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-text-shimmer {
+  background: linear-gradient(90deg, var(--color-beast-green) 0%, #00FF88 50%, var(--color-beast-green) 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 3s linear infinite;
+}
+
+/* ============================================
+   Glassmorphism & Card Styles
+   ============================================ */
+
+.glass {
+  background: rgba(22, 33, 62, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 230, 118, 0.1);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(22, 33, 62, 0.8) 0%, rgba(15, 15, 15, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 230, 118, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(0, 230, 118, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 230, 118, 0.1);
+  transform: translateY(-4px);
+}
+
+.cyber-card {
+  background: var(--color-cyber-card);
+  border: 1px solid var(--color-cyber-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.cyber-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-beast-green), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cyber-card:hover::before {
+  opacity: 1;
+}
+
+/* ============================================
+   Button Styles
+   ============================================ */
+
+.btn-glow {
+  background: linear-gradient(135deg, var(--color-beast-green-500) 0%, var(--color-beast-green) 100%);
+  color: #000000;
+  font-weight: 700;
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(0, 230, 118, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(0, 230, 118, 0.5), 0 0 60px rgba(0, 230, 118, 0.3);
+}
+
+.btn-glow:active {
+  transform: translateY(0);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-beast-green);
+  font-weight: 600;
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  border: 2px solid var(--color-beast-green);
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background: rgba(0, 230, 118, 0.1);
+  box-shadow: 0 0 20px rgba(0, 230, 118, 0.2);
+}
+
+.btn-secondary {
+  background: var(--color-cyber-card);
+  color: var(--color-foreground);
+  font-weight: 600;
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid var(--color-cyber-border);
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: var(--color-cyber-surface);
+  border-color: var(--color-beast-green);
+}
+
+/* ============================================
+   Text Styles
+   ============================================ */
+
+.text-glow {
+  text-shadow: 0 0 10px rgba(0, 230, 118, 0.5), 0 0 20px rgba(0, 230, 118, 0.3);
+}
+
+.text-glow-gold {
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-beast-green) 0%, #00FF88 50%, var(--color-beast-gold) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heading-cyber {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================
+   Layout Utilities
+   ============================================ */
+
+.section-padding {
+  padding: 5rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding: 7rem 2rem;
+  }
+}
+
+.container-narrow {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.container-wide {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   Grid Background Pattern
+   ============================================ */
+
+.bg-grid {
+  background-image: 
+    linear-gradient(rgba(0, 230, 118, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 230, 118, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.bg-radial-glow {
+  background: radial-gradient(ellipse at center top, rgba(0, 230, 118, 0.1) 0%, transparent 50%);
+}
+
+/* ============================================
+   Scrollbar Styling
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-beast-black-100);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-beast-green-600);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-beast-green);
+}
+
+/* ============================================
+   Selection Styling
+   ============================================ */
+
+::selection {
+  background: rgba(0, 230, 118, 0.3);
+  color: white;
+}
+
+/* ============================================
+   Focus Styles
+   ============================================ */
+
+:focus-visible {
+  outline: 2px solid var(--color-beast-green);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Responsive Utilities
+   ============================================ */
+
+@media (max-width: 768px) {
+  .mobile-full {
+    width: 100%;
+  }
+  
+  .mobile-center {
+    text-align: center;
+  }
+  
+  .mobile-stack {
+    flex-direction: column;
+  }
+}
