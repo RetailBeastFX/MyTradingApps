@@ -133,49 +133,8 @@ export default function CommunityPage() {
                 </div>
             </section>
 
-            {/* User Gallery */}
-            <section className="section-padding bg-cyber-dark">
-                <div className="container-wide mx-auto">
-                    <div className="text-center mb-12">
-                        <h2 className="heading-cyber text-3xl md:text-4xl text-white mb-4">
-                            Community <span className="text-beast-green">Wins</span>
-                        </h2>
-                        <p className="text-gray-400">
-                            Traders sharing their journey with the RetailBeastFX ecosystem
-                        </p>
-                    </div>
+            {/* Community Wins section removed - will add back when we have real customer reviews */}
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {galleryItems.map((item, i) => (
-                            <div key={i} className="glass-card rounded-xl p-6">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-cyber-surface flex items-center justify-center">
-                                            <span className="text-lg">👤</span>
-                                        </div>
-                                        <span className="text-gray-400 text-sm">Anonymous Trader</span>
-                                    </div>
-                                    <span className="px-2 py-1 bg-beast-green/20 text-beast-green text-xs rounded-full">Verified</span>
-                                </div>
-                                <div className="grid grid-cols-3 gap-4 text-center">
-                                    <div>
-                                        <p className="text-2xl font-bold text-beast-green">{item.winRate}</p>
-                                        <p className="text-xs text-gray-500">Win Rate</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-2xl font-bold text-white">{item.trades}</p>
-                                        <p className="text-xs text-gray-500">Trades</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-2xl font-bold text-beast-gold">{item.streak}</p>
-                                        <p className="text-xs text-gray-500">Best Streak</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
 
             {/* Affiliate Program */}
             <section className="section-padding">
