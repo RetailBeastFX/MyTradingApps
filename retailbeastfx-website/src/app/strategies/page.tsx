@@ -4,8 +4,183 @@ import { useState } from 'react';
 import { GlowButton } from '@/components/Marketing';
 import Image from 'next/image';
 
+// Alpha Edge Iron Rules
+const ironRules = [
+    { rule: '1% Risk Maximum', desc: 'Never risk more than 1% per trade. Beginners: 0.5%.' },
+    { rule: 'Journal Everything', desc: 'Every trade logged. No exceptions. No excuses.' },
+    { rule: 'Demo 100+ Trades First', desc: 'Prove profitability before going live.' },
+    { rule: 'No Revenge Trading', desc: 'Lost 3 in a row? Walk away. Come back tomorrow.' },
+    { rule: 'One Strategy at a Time', desc: 'Master one before adding complexity.' },
+];
+
+// Honorable Mentions
+const honorableMentions = [
+    {
+        name: 'Carry Trade',
+        desc: 'Long high-interest currency vs low (e.g., AUD/JPY). Collect rollover. Risk: Sudden unwinds.',
+    },
+    {
+        name: 'Pure Price Action at S/R',
+        desc: 'Trade pin bars/engulfing at clear horizontal support/resistance. Confluence only. Simplest edge.',
+    },
+];
+
 // Strategy section data
 const strategies = [
+    // ========== ALPHA EDGE A+ STRATEGIES ==========
+    {
+        id: 'trend-following',
+        name: 'Trend Following',
+        tagline: 'The Patient Predator',
+        icon: '📈',
+        difficulty: 'Beginner-Friendly',
+        winRate: '55-65%',
+        description: 'Decades of evidence (Turtles, CTAs, Paul Tudor Jones). Long when price > 200 SMA, exit when below. Holds months to years. Minimal screen time. Outperforms buy-hold in trending regimes.',
+        components: [
+            {
+                title: '200-Period SMA Filter',
+                desc: 'The backbone. Long only above, short only below. Daily/weekly charts preferred.',
+            },
+            {
+                title: '50/200 Golden Cross',
+                desc: 'Optional entry filter. 50 EMA crossing above 200 SMA confirms the trend.',
+            },
+            {
+                title: 'ATR Trailing Stop',
+                desc: 'Trail stops with 2-3x ATR or prior swing highs/lows. Let winners run.',
+            },
+            {
+                title: 'Position Sizing',
+                desc: 'Fixed fractional sizing. Hold until signal reverses. No discretion.',
+            },
+        ],
+        implementation: [
+            'Identify price position relative to 200 SMA on daily chart',
+            'If above 200 SMA, look for long entries on pullbacks',
+            'Optional: Wait for 50/200 golden cross for extra confirmation',
+            'Set ATR-based trailing stop. Hold for weeks to months.',
+        ],
+        stats: {
+            winRate: '55-65%',
+            avgRR: '3-5R',
+            bestPairs: 'Indices, Forex Majors, BTC',
+        },
+    },
+    {
+        id: 'mean-reversion',
+        name: 'Mean Reversion RSI',
+        tagline: 'The Contrarian',
+        icon: '🔄',
+        difficulty: 'Beginner-Friendly',
+        winRate: '70-75%',
+        description: 'Quant-backed strategy. Buy RSI(2) < 10-15. Sell/short > 85. Exit at midline. Studies show 1-4% avg gain per trade in ranging markets. Always filter with trend.',
+        components: [
+            {
+                title: 'RSI(2) Extremes',
+                desc: 'Ultra-short RSI captures exhaustion. Below 10 = extreme oversold. Above 90 = extreme overbought.',
+            },
+            {
+                title: '200 MA Trend Filter',
+                desc: 'Only take longs above 200 MA. Only take shorts below. Avoid fighting the trend.',
+            },
+            {
+                title: 'Midline Exit',
+                desc: 'Exit at RSI 50 or opposite extreme. Quick, mechanical exits.',
+            },
+            {
+                title: 'Tight Stop Management',
+                desc: 'Stop beyond recent swing. Low exposure time reduces risk.',
+            },
+        ],
+        implementation: [
+            'Apply RSI(2) to daily chart',
+            'Filter: Trade only in direction of 200 MA',
+            'Enter when RSI(2) < 15 (long) or > 85 (short)',
+            'Exit at RSI 50 or scale out at opposite extreme',
+        ],
+        stats: {
+            winRate: '70-75%',
+            avgRR: '1.5-2R',
+            bestPairs: 'Forex Majors, Indices, Low-Vol Stocks',
+        },
+    },
+    {
+        id: 'swing-pullbacks',
+        name: 'Swing Pullbacks',
+        tagline: 'The Sniper',
+        icon: '🎯',
+        difficulty: 'Intermediate',
+        winRate: '50-60%',
+        description: 'Combines trend + reversion. Wait for HTF trend, then buy pullbacks to structure (Fib 50-61.8%, EMA cluster, prior swing). Enter on reversal candle. Targeting 2-4R.',
+        components: [
+            {
+                title: 'HTF Trend Identification',
+                desc: 'Daily chart: Price > 200 MA = bullish bias. Only look for longs.',
+            },
+            {
+                title: 'LTF Pullback Zones',
+                desc: 'H4/H1: Wait for pullback to 50-61.8% Fib, EMA cluster (8/21/50), or prior swing.',
+            },
+            {
+                title: 'Reversal Confirmation',
+                desc: 'Pin bar, engulfing candle, or RSI divergence on the LTF. No naked entries.',
+            },
+            {
+                title: 'Structured Targets',
+                desc: 'Target next swing high/low or fixed 2-4R. Trail remainder.',
+            },
+        ],
+        implementation: [
+            'Identify HTF trend (price > 200 MA on daily)',
+            'Switch to H4/H1 and wait for pullback to structure',
+            'Confirm reversal with candle pattern + momentum (RSI divergence)',
+            'Enter with stop below swing. Target 2-4R.',
+        ],
+        stats: {
+            winRate: '50-60%',
+            avgRR: '2-4R',
+            bestPairs: 'Forex, Indices, Crypto',
+        },
+    },
+    {
+        id: 'breakout-trading',
+        name: 'Breakout Trading',
+        tagline: 'The Volatility Hunter',
+        icon: '💥',
+        difficulty: 'Intermediate',
+        winRate: '45-55%',
+        description: 'Identify tight consolidation (narrow ATR, squeeze). Enter on close beyond range with volume spike. High reward on winners. Strong in volatile regimes like 2025 post-rate cycles.',
+        components: [
+            {
+                title: 'Range Identification',
+                desc: '20-period Bollinger squeeze or ATR at multi-week lows. Price coiling = explosion incoming.',
+            },
+            {
+                title: 'Volume/Momentum Confirmation',
+                desc: 'ADX > 25 or clear volume spike on breakout. Avoid low-volume fakeouts.',
+            },
+            {
+                title: 'Measured Move Targets',
+                desc: 'Project range height from breakout point. Classic 1:1 measured move.',
+            },
+            {
+                title: 'Session Alignment',
+                desc: 'Best during London/NY opens. Avoid Asian session breakouts.',
+            },
+        ],
+        implementation: [
+            'Identify consolidation zone (tight range, low ATR)',
+            'Wait for close beyond range high/low',
+            'Confirm with volume spike or ADX > 25',
+            'Target measured move (range height) or 3:1 R:R',
+        ],
+        stats: {
+            winRate: '45-55%',
+            avgRR: '3-5R',
+            bestPairs: 'Indices, BTC, High-Beta Forex',
+        },
+    },
+    // ========== ORIGINAL STRATEGIES ==========
     {
         id: 'retail-beast',
         name: 'Retail Beast',
@@ -173,8 +348,8 @@ export default function StrategiesPage() {
                                 key={s.id}
                                 onClick={() => setActiveStrategy(s.id)}
                                 className={`px-6 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${activeStrategy === s.id
-                                        ? 'bg-beast-green text-black'
-                                        : 'glass-card text-gray-300 hover:text-white hover:border-beast-green/50'
+                                    ? 'bg-beast-green text-black'
+                                    : 'glass-card text-gray-300 hover:text-white hover:border-beast-green/50'
                                     }`}
                             >
                                 <span className="text-xl">{s.icon}</span>
@@ -203,10 +378,10 @@ export default function StrategiesPage() {
                             </div>
                             <div className="flex flex-col gap-2">
                                 <span className={`px-4 py-1 rounded-full text-xs font-bold uppercase ${active.difficulty === 'Beginner-Friendly'
-                                        ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                                        : active.difficulty === 'Advanced'
-                                            ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                                            : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                                    : active.difficulty === 'Advanced'
+                                        ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                                        : 'bg-red-500/20 text-red-400 border border-red-500/30'
                                     }`}>
                                     {active.difficulty}
                                 </span>
@@ -344,6 +519,59 @@ export default function StrategiesPage() {
                             <div className="text-3xl font-bold text-beast-green mb-2">380-1,400% Annualized</div>
                             <div className="text-gray-400">Potential returns with full hybrid implementation</div>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ========== ALPHA EDGE IRON RULES ========== */}
+            <section className="section-padding">
+                <div className="container-narrow mx-auto">
+                    <div className="text-center mb-12">
+                        <span className="inline-block px-4 py-2 rounded-full bg-red-500/10 text-red-400 text-sm font-medium mb-4 border border-red-500/20">
+                            ⚡ Alpha Edge Protocol
+                        </span>
+                        <h2 className="heading-cyber text-3xl text-white mb-4">
+                            The <span className="text-red-400">Iron Rules</span>
+                        </h2>
+                        <p className="text-gray-400 max-w-2xl mx-auto">
+                            Break these and you lose. No exceptions. No excuses. This is what separates profitable traders from the crowd.
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-5 gap-4">
+                        {ironRules.map((item, i) => (
+                            <div key={i} className="glass-card rounded-xl p-6 text-center border-red-500/20 hover:border-red-500/40 transition-colors">
+                                <div className="w-10 h-10 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
+                                    <span className="text-red-400 font-bold">{i + 1}</span>
+                                </div>
+                                <h3 className="font-medium text-white text-sm mb-2">{item.rule}</h3>
+                                <p className="text-gray-500 text-xs">{item.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ========== HONORABLE MENTIONS ========== */}
+            <section className="section-padding bg-cyber-dark">
+                <div className="container-narrow mx-auto">
+                    <h2 className="heading-cyber text-2xl text-white text-center mb-8">
+                        Honorable <span className="text-beast-gold">Mentions</span>
+                    </h2>
+                    <p className="text-gray-400 text-center max-w-xl mx-auto mb-8 text-sm">
+                        Regime-dependent strategies. Use only when conditions align.
+                    </p>
+
+                    <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                        {honorableMentions.map((item, i) => (
+                            <div key={i} className="bg-cyber-surface rounded-xl p-6 border border-cyber-border">
+                                <h3 className="font-medium text-beast-gold mb-2 flex items-center gap-2">
+                                    <span className="text-lg">⭐</span>
+                                    {item.name}
+                                </h3>
+                                <p className="text-gray-400 text-sm">{item.desc}</p>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>

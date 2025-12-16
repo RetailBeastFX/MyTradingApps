@@ -1,13 +1,17 @@
-import Image from 'next/image';
+'use client';
+
+import dynamic from 'next/dynamic';
 import { GlowButton } from '@/components/Marketing';
 
-// All mascot poses for the gallery
-const mascotPoses = [
-    { src: '/mascot/beast-pose-1-card.png', label: 'Ready' },
-    { src: '/mascot/beast-pose-2-card.png', label: 'Hunting' },
-    { src: '/mascot/beast-pose-3-card.png', label: 'Locked' },
-    { src: '/mascot/beast-pose-4-card.png', label: 'Victory' },
-];
+// Dynamically import Mascot3D to avoid SSR issues
+const Mascot3D = dynamic(() => import('@/components/Mascot3D'), {
+    ssr: false,
+    loading: () => (
+        <div className="w-full h-full flex items-center justify-center">
+            <div className="w-16 h-16 border-4 border-beast-green border-t-transparent rounded-full animate-spin" />
+        </div>
+    ),
+});
 
 export default function AboutPage() {
     return (
@@ -21,19 +25,20 @@ export default function AboutPage() {
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         <div>
                             <h1 className="heading-cyber text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                                <span className="text-white">From Indicator to</span>
+                                <span className="text-white">The Complete</span>
                                 <br />
-                                <span className="gradient-text">Journal</span>
+                                <span className="gradient-text">Trading Ecosystem</span>
                             </h1>
 
                             <p className="text-xl text-gray-300 mb-6">
-                                Building mechanical traders, one disciplined trade at a time.
+                                Premium indicator. Powerful journal. Thriving community. All in one.
                             </p>
 
                             <p className="text-gray-400 mb-8">
-                                RetailBeastFX started as a simple ICT/SMC indicator. But we quickly realized
-                                that having the best signals means nothing without the discipline to execute them.
-                                That&apos;s when the journal was born – the missing link between knowing and doing.
+                                RetailBeastFX isn&apos;t just another indicator – it&apos;s the full package.
+                                We combined institutional-grade signal detection with a comprehensive trading journal
+                                and an active community of serious traders. Built from real trading experience,
+                                battle-tested in live markets, and continuously improved based on what actually works.
                             </p>
 
                             <div className="flex items-center gap-6">
@@ -54,38 +59,21 @@ export default function AboutPage() {
                             </div>
                         </div>
 
-                        {/* Mascot Gallery */}
+                        {/* 3D Mascot - Brand Symbol */}
                         <div className="relative">
                             <div className="glass-card rounded-2xl p-6 relative overflow-hidden">
                                 {/* Glow effect */}
                                 <div className="absolute inset-0 bg-gradient-to-br from-beast-green/10 via-transparent to-beast-green/5" />
 
-                                {/* Mascot Grid */}
-                                <div className="grid grid-cols-2 gap-4 relative z-10">
-                                    {mascotPoses.map((pose, index) => (
-                                        <div
-                                            key={pose.label}
-                                            className="group relative aspect-square bg-cyber-surface rounded-xl border border-cyber-border hover:border-beast-green/50 transition-all duration-300 overflow-hidden"
-                                        >
-                                            <Image
-                                                src={pose.src}
-                                                alt={`RetailBeastFX Mascot - ${pose.label}`}
-                                                fill
-                                                className="object-contain p-2 drop-shadow-[0_0_20px_rgba(0,230,118,0.3)] group-hover:scale-110 transition-transform duration-300"
-                                            />
-                                            <div className="absolute bottom-2 left-0 right-0 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <span className="px-2 py-1 bg-beast-green/20 text-beast-green text-xs font-medium rounded-full">
-                                                    {pose.label}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
+                                {/* 3D Mascot */}
+                                <div className="relative z-10 h-[400px]">
+                                    <Mascot3D scale={2.5} />
                                 </div>
 
-                                {/* Gallery Label */}
+                                {/* Brand Label */}
                                 <div className="text-center mt-4 relative z-10">
-                                    <p className="text-beast-green font-semibold heading-cyber">The Beast Modes</p>
-                                    <p className="text-gray-400 text-sm">4 poses. 1 mission. Profits.</p>
+                                    <p className="text-beast-green font-semibold heading-cyber">The Beast</p>
+                                    <p className="text-gray-400 text-sm">Discipline. Execution. Profits.</p>
                                 </div>
                             </div>
                         </div>
@@ -102,8 +90,9 @@ export default function AboutPage() {
 
                     <div className="glass-card rounded-2xl p-8 md:p-12">
                         <p className="text-xl md:text-2xl text-gray-300 leading-relaxed">
-                            &ldquo;To transform emotional retail traders into <span className="text-beast-green font-semibold">mechanical execution machines</span> through
-                            world-class tools, data-driven journaling, and a community that holds each other accountable.&rdquo;
+                            &ldquo;We give retail traders the same edge the institutions have –
+                            <span className="text-beast-green font-semibold">precision entries, automated analysis, and the discipline tools</span> to
+                            stop leaving money on the table. No more guessing. No more revenge trading. Just clean, mechanical execution.&rdquo;
                         </p>
                     </div>
                 </div>
@@ -163,7 +152,7 @@ export default function AboutPage() {
             <section className="section-padding bg-cyber-dark">
                 <div className="container-narrow mx-auto">
                     <h2 className="heading-cyber text-3xl md:text-4xl text-white text-center mb-12">
-                        The <span className="text-beast-green">Story</span>
+                        What You <span className="text-beast-green">Get</span>
                     </h2>
 
                     <div className="space-y-12">
@@ -172,11 +161,12 @@ export default function AboutPage() {
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-beast-green rounded-full" />
                             </div>
                             <div>
-                                <p className="text-beast-green font-semibold mb-2">Early 2024</p>
-                                <h3 className="text-xl text-white mb-2">The Problem</h3>
+                                <p className="text-beast-green font-semibold mb-2">🎯 Premium Indicator</p>
+                                <h3 className="text-xl text-white mb-2">Institutional-Grade Signals</h3>
                                 <p className="text-gray-400">
-                                    Like most traders, we had all the knowledge – ICT, SMC, order flow. But we kept
-                                    blowing accounts. The pattern was clear: we knew what to do, but we couldn&apos;t execute consistently.
+                                    Auto-detected Order Blocks, SMC/ICT confluences, Killzone overlays, and our proprietary
+                                    Quantum Lock™ system. Real-time alerts for entries, take-profits, and stop-losses.
+                                    Works on Forex, Crypto, Indices – any market, any timeframe.
                                 </p>
                             </div>
                         </div>
@@ -186,11 +176,12 @@ export default function AboutPage() {
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-beast-green rounded-full" />
                             </div>
                             <div>
-                                <p className="text-beast-green font-semibold mb-2">Mid 2024</p>
-                                <h3 className="text-xl text-white mb-2">The Indicator</h3>
+                                <p className="text-beast-green font-semibold mb-2">📊 Advanced Journal</p>
+                                <h3 className="text-xl text-white mb-2">Your Personal Trading Coach</h3>
                                 <p className="text-gray-400">
-                                    We built RetailBeastFX to automate signal detection. Fresh Order Blocks, Killzones,
-                                    Quantum Lock™ – all the concepts we were manually tracking, now visual and alert-ready.
+                                    Full trade logging with MT5 import, detailed analytics, streak tracking, and
+                                    risk-reward calculations. See exactly where you&apos;re leaving money on the table
+                                    and fix it. Data doesn&apos;t lie.
                                 </p>
                             </div>
                         </div>
@@ -200,11 +191,12 @@ export default function AboutPage() {
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-beast-green rounded-full" />
                             </div>
                             <div>
-                                <p className="text-beast-green font-semibold mb-2">Late 2024</p>
-                                <h3 className="text-xl text-white mb-2">The Journal</h3>
+                                <p className="text-beast-green font-semibold mb-2">👥 Active Community</p>
+                                <h3 className="text-xl text-white mb-2">Trade With Serious Traders</h3>
                                 <p className="text-gray-400">
-                                    But signals weren&apos;t enough. We needed accountability. The journal was born –
-                                    track every trade, see your real stats, and let the data guide improvements.
+                                    Join thousands of traders in our Discord. Live market analysis, trade ideas,
+                                    killzone alerts from our Alpha Edge bot, and a community that keeps you accountable.
+                                    No pump-and-dump nonsense – just real traders helping each other win.
                                 </p>
                             </div>
                         </div>
@@ -214,11 +206,27 @@ export default function AboutPage() {
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-beast-green rounded-full" />
                             </div>
                             <div>
-                                <p className="text-beast-green font-semibold mb-2">Now</p>
-                                <h3 className="text-xl text-white mb-2">The Ecosystem</h3>
+                                <p className="text-beast-green font-semibold mb-2">⚡ Multi-Platform</p>
+                                <h3 className="text-xl text-white mb-2">Trade Anywhere</h3>
                                 <p className="text-gray-400">
-                                    Today, RetailBeastFX is a complete trading ecosystem. Indicator for signals,
-                                    journal for execution, community for accountability. We&apos;re here to make you profitable.
+                                    TradingView indicator, MT5 version, web-based journal accessible from any device.
+                                    Your whole trading system, unified and accessible wherever you are.
+                                    No more switching between 10 different tools.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-6">
+                            <div className="w-1 bg-beast-green/30 rounded-full relative">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-beast-green rounded-full" />
+                            </div>
+                            <div>
+                                <p className="text-beast-green font-semibold mb-2">🚀 Constantly Evolving</p>
+                                <h3 className="text-xl text-white mb-2">We Never Stop Improving</h3>
+                                <p className="text-gray-400">
+                                    Regular updates based on community feedback and market changes. New features,
+                                    new strategies, new tools. When you join RetailBeastFX, you&apos;re getting
+                                    a product that gets better every single week.
                                 </p>
                             </div>
                         </div>

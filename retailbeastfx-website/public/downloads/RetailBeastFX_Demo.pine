@@ -1,0 +1,454 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © RetailBeast 2025
+
+//@version=5
+indicator("RetailBeastFX DEMO [v8.3]", shorttitle="RBFX Demo", overlay=true, max_bars_back=200, max_lines_count=100, max_boxes_count=100, max_labels_count=100)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ DEMO VERSION NOTICE ███
+// ══════════════════════════════════════════════════════════════════════════════
+// This is a LIMITED DEMO of RetailBeastFX Premium
+// 
+// DEMO LIMITATIONS:
+// ✗ Signals limited to last 50 bars only
+// ✗ Only 1 Order Block displayed
+// ✗ No FVG/iFVG detection  
+// ✗ No Volume Imbalance
+// ✗ No Silver Bullet / Power Hour alerts
+// ✗ No ATR-based SL/TP levels
+// ✗ No HTF Trend Background
+// ✗ Limited dashboard features
+//
+// UPGRADE TO PREMIUM for full access at: retailbeastfx.com
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ SETTINGS ███
+// ══════════════════════════════════════════════════════════════════════════════
+string modeGroup = "═══ MODE SELECTOR ═══"
+string modeTooltip = "SCALPER: London/NY killzones only\nDAY TRADER: Extended hours\nSWING: 24/7 with EMA 200 filter"
+string gameMode = input.string("SCALPER", "Trading Mode", options=["SCALPER", "DAY TRADER", "SWING"], group=modeGroup, tooltip=modeTooltip)
+
+// ─── ALPHA EDGE A+ STRATEGY (NEW) ───
+string alphaGroup = "═══ ALPHA EDGE ═══"
+string alphaTooltip = "Select your A+ strategy focus:\n• Trend Following: 200 SMA direction\n• Mean Reversion: RSI extremes\n• Swing Pullbacks: EMA pullback zones\n• Breakout: BB squeeze expansion\n• All: Combined confluence"
+string alphaStrategy = input.string("Off", "Alpha Edge Strategy", options=["Off", "Trend Following", "Mean Reversion", "Swing Pullbacks", "Breakout", "All Signals"], group=alphaGroup, tooltip=alphaTooltip)
+int rsiPeriod = input.int(2, "RSI Period (Mean Reversion)", minval=1, maxval=14, group=alphaGroup, tooltip="RSI(2) is optimal for mean reversion. Lower = more sensitive.")
+int rsiOversold = input.int(15, "RSI Oversold Level", minval=5, maxval=30, group=alphaGroup)
+int rsiOverbought = input.int(85, "RSI Overbought Level", minval=70, maxval=95, group=alphaGroup)
+
+string kzGroup = "═══ KILLZONE SETTINGS ═══"
+bool showKillzones = input.bool(true, "Show Killzones", group=kzGroup)
+bool killzoneSignalsOnly = input.bool(true, "Signals in Killzones Only", group=kzGroup, tooltip="TRINITY DEFAULT: Only fire signals during active killzones")
+color londonColor = input.color(color.new(#00CED1, 85), "London Color", group=kzGroup)
+color nyColor = input.color(color.new(#FF8C00, 85), "NY Color", group=kzGroup)
+
+string bbGroup = "═══ BOLLINGER BANDS ═══"
+bool showBB = input.bool(true, "Show Bollinger Bands", group=bbGroup)
+int bbLength = input.int(20, "Length", minval=5, maxval=50, group=bbGroup)
+float bbMult = input.float(2.0, "Deviation", minval=0.5, maxval=3.0, step=0.1, group=bbGroup, tooltip="2.0 SD = 88-89% containment (Bollinger standard)")
+color bbColor = input.color(color.new(#64B5F6, 50), "BB Color", group=bbGroup)
+
+string emaGroup = "═══ EMA SETTINGS ═══"
+bool showEMAs = input.bool(true, "Show EMAs", group=emaGroup)
+bool showEMARibbon = input.bool(true, "Show EMA Ribbon", group=emaGroup)
+int emaFast = input.int(8, "Fast EMA", minval=3, maxval=50, group=emaGroup)
+int emaSlow = input.int(21, "Slow EMA", minval=10, maxval=100, group=emaGroup)
+int emaTrend = input.int(200, "Trend EMA (Swing)", minval=50, maxval=500, group=emaGroup)
+
+color emaBullColor = input.color(color.new(#00E676, 70), "Bullish Ribbon", group=emaGroup)
+color emaBearColor = input.color(color.new(#FF5252, 70), "Bearish Ribbon", group=emaGroup)
+
+string smcGroup = "═══ SMC OVERLAY ═══"
+bool showOB = input.bool(true, "Show Order Blocks", group=smcGroup)
+bool showSwings = input.bool(true, "Show Swing H/L", group=smcGroup)
+int pivotLen = input.int(5, "Pivot Length", minval=2, maxval=20, group=smcGroup)
+color bullOBColor = input.color(color.new(#26A69A, 85), "Bull OB", group=smcGroup)
+color bearOBColor = input.color(color.new(#EF5350, 85), "Bear OB", group=smcGroup)
+
+string visGroup = "═══ VISUAL SETTINGS ═══"
+bool showSignals = input.bool(true, "Show Signal Arrows", group=visGroup)
+bool showDashboard = input.bool(true, "Show Dashboard", group=visGroup)
+color signalBuyColor = input.color(#00FF7F, "Buy Signal", group=visGroup)
+color signalSellColor = input.color(#FF4757, "Sell Signal", group=visGroup)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ TIMEZONE FUNCTIONS ███
+// ══════════════════════════════════════════════════════════════════════════════
+tz = "America/New_York"
+
+isInSession(string sess) =>
+    not na(time(timeframe.period, sess, tz))
+
+bool inLondon = isInSession("0300-0600")
+bool inNY = isInSession("0800-1100")
+bool inExtended = isInSession("0200-1200")
+
+isValidSession() =>
+    switch gameMode
+        "SCALPER" => inLondon or inNY
+        "DAY TRADER" => inExtended
+        "SWING" => true
+        => true
+
+bool validSession = isValidSession()
+
+// Killzone signal filter
+bool inKillzone = inLondon or inNY
+bool killzoneOK = killzoneSignalsOnly ? inKillzone : true
+
+// ─── DEMO LIMITATION: Only show last 50 bars ───
+int demoLookback = 50
+bool showOnChart = bar_index >= (last_bar_index - demoLookback)
+
+// ─── Signal cooldown to prevent spam ───
+var int lastBuyBar = 0
+var int lastSellBar = 0
+int signalCooldown = 5
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ CORE CALCULATIONS ███
+// ══════════════════════════════════════════════════════════════════════════════
+// Bollinger Bands
+float bbBasis = ta.sma(close, bbLength)
+float bbDev = bbMult * ta.stdev(close, bbLength)
+float bbUpper = bbBasis + bbDev
+float bbLower = bbBasis - bbDev
+
+// EMAs
+float ema8 = ta.ema(close, emaFast)
+float ema21 = ta.ema(close, emaSlow)
+float ema200 = ta.ema(close, emaTrend)
+float ema50 = ta.ema(close, 50)
+
+// RSI for Alpha Edge Mean Reversion
+float rsi = ta.rsi(close, rsiPeriod)
+bool rsiOversoldSignal = rsi < rsiOversold
+bool rsiOverboughtSignal = rsi > rsiOverbought
+
+// BB Squeeze for Breakout
+float bbWidth = (bbUpper - bbLower) / bbBasis
+bool bbSqueeze = bbWidth < ta.sma(bbWidth, 20)
+
+// Trend conditions
+bool bullTrend = ema8 > ema21
+bool bearTrend = ema8 < ema21
+bool aboveSMA200 = close > ema200
+bool belowSMA200 = close < ema200
+
+// Swing mode filter
+bool swingBullOK = gameMode != "SWING" or aboveSMA200
+bool swingBearOK = gameMode != "SWING" or belowSMA200
+
+// BB touch detection
+bool touchedLowerBB = low <= bbLower
+bool touchedUpperBB = high >= bbUpper
+
+// Candle direction
+bool bullCandle = close > open
+bool bearCandle = close < open
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ ALPHA EDGE A+ SIGNALS ███
+// ══════════════════════════════════════════════════════════════════════════════
+// 1. TREND FOLLOWING: Cross above/below 200 SMA
+bool trendBuy = ta.crossover(close, ema200)
+bool trendSell = ta.crossunder(close, ema200)
+
+// 2. MEAN REVERSION: RSI extremes WITH trend filter
+bool meanRevBuy = rsiOversoldSignal and aboveSMA200 and not rsiOversoldSignal[1]
+bool meanRevSell = rsiOverboughtSignal and belowSMA200 and not rsiOverboughtSignal[1]
+
+// 3. SWING PULLBACKS: Touch EMA50 zone in established trend
+bool pullbackZone = low <= ema50 and high >= ema50
+bool pullbackBuy = aboveSMA200 and bullTrend and pullbackZone and close > ema8
+bool pullbackSell = belowSMA200 and bearTrend and pullbackZone and close < ema8
+bool pullbackBuySignal = pullbackBuy and not pullbackBuy[1]
+bool pullbackSellSignal = pullbackSell and not pullbackSell[1]
+
+// 4. BREAKOUT: Squeeze → Expansion
+bool breakoutBuy = bbSqueeze[1] and close > bbUpper and ta.crossover(close, bbUpper)
+bool breakoutSell = bbSqueeze[1] and close < bbLower and ta.crossunder(close, bbLower)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ SIGNAL LOGIC (ANTI-REPAINT) ███
+// ══════════════════════════════════════════════════════════════════════════════
+// Original BB-based signals
+bool originalBuy = bullCandle and touchedLowerBB and bullTrend and swingBullOK and validSession and killzoneOK
+bool originalSell = bearCandle and touchedUpperBB and bearTrend and swingBearOK and validSession and killzoneOK
+
+// Alpha Edge signal selection
+bool alphaBuy = switch alphaStrategy
+    "Trend Following" => trendBuy and validSession and killzoneOK
+    "Mean Reversion" => meanRevBuy and validSession and killzoneOK
+    "Swing Pullbacks" => pullbackBuySignal and validSession and killzoneOK
+    "Breakout" => breakoutBuy and validSession and killzoneOK
+    "All Signals" => (trendBuy or meanRevBuy or pullbackBuySignal or breakoutBuy) and validSession and killzoneOK
+    => false
+
+bool alphaSell = switch alphaStrategy
+    "Trend Following" => trendSell and validSession and killzoneOK
+    "Mean Reversion" => meanRevSell and validSession and killzoneOK
+    "Swing Pullbacks" => pullbackSellSignal and validSession and killzoneOK
+    "Breakout" => breakoutSell and validSession and killzoneOK
+    "All Signals" => (trendSell or meanRevSell or pullbackSellSignal or breakoutSell) and validSession and killzoneOK
+    => false
+
+// Final signal: Use Alpha Edge if enabled, otherwise original
+bool rawBuySignal = alphaStrategy != "Off" ? alphaBuy : originalBuy
+bool rawSellSignal = alphaStrategy != "Off" ? alphaSell : originalSell
+
+// Anti-repaint: Signal only on confirmed bar + cooldown
+bool buySignal = rawBuySignal and barstate.isconfirmed and (bar_index - lastBuyBar > signalCooldown)
+bool sellSignal = rawSellSignal and barstate.isconfirmed and (bar_index - lastSellBar > signalCooldown)
+
+// Update cooldown trackers
+if buySignal
+    lastBuyBar := bar_index
+if sellSignal
+    lastSellBar := bar_index
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ KILLZONE BOXES (DEMO: Basic version) ███
+// ══════════════════════════════════════════════════════════════════════════════
+var float londonHigh = na
+var float londonLow = na
+var int londonStartBar = na
+var bool londonActive = false
+
+var float nyHigh = na
+var float nyLow = na
+var int nyStartBar = na
+var bool nyActive = false
+
+var box londonBox = na
+var box nyBox = na
+
+// London Session
+if showKillzones and showOnChart
+    if inLondon and not inLondon[1]
+        londonActive := true
+        londonStartBar := bar_index
+        londonHigh := high
+        londonLow := low
+        box.delete(londonBox)
+    
+    if londonActive and inLondon
+        londonHigh := math.max(londonHigh, high)
+        londonLow := math.min(londonLow, low)
+        box.delete(londonBox)
+        londonBox := box.new(londonStartBar, londonHigh, bar_index, londonLow, 
+                             border_color=color.new(londonColor, 20), border_width=1, 
+                             bgcolor=londonColor, text="LONDON", text_color=color.white, 
+                             text_size=size.tiny, text_halign=text.align_left, text_valign=text.align_top)
+    
+    if not inLondon and inLondon[1] and londonActive
+        londonActive := false
+
+// NY Session
+if showKillzones and showOnChart
+    if inNY and not inNY[1]
+        nyActive := true
+        nyStartBar := bar_index
+        nyHigh := high
+        nyLow := low
+        box.delete(nyBox)
+    
+    if nyActive and inNY
+        nyHigh := math.max(nyHigh, high)
+        nyLow := math.min(nyLow, low)
+        box.delete(nyBox)
+        nyBox := box.new(nyStartBar, nyHigh, bar_index, nyLow, 
+                         border_color=color.new(nyColor, 20), border_width=1, 
+                         bgcolor=nyColor, text="NY", text_color=color.white, 
+                         text_size=size.tiny, text_halign=text.align_left, text_valign=text.align_top)
+    
+    if not inNY and inNY[1] and nyActive
+        nyActive := false
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ ORDER BLOCKS (DEMO: Only 1 OB) ███
+// ══════════════════════════════════════════════════════════════════════════════
+// Pivot detection for OB
+float pivotHigh = ta.pivothigh(high, pivotLen, pivotLen)
+float pivotLow = ta.pivotlow(low, pivotLen, pivotLen)
+
+var box bullOB = na
+var box bearOB = na
+var bool bullOBValid = false
+var bool bearOBValid = false
+
+// DEMO: Only show 1 OB at a time
+if showOB and not na(pivotHigh) and showOnChart
+    // Bearish OB at swing high
+    box.delete(bearOB)
+    bearOB := box.new(bar_index - pivotLen - 1, high[pivotLen], bar_index - pivotLen + 5, low[pivotLen],
+                      border_color=bearOBColor, bgcolor=bearOBColor, 
+                      text="OB", text_color=color.new(#FF5252, 30), text_size=size.tiny,
+                      text_halign=text.align_right, text_valign=text.align_center)
+    bearOBValid := true
+
+if showOB and not na(pivotLow) and showOnChart
+    // Bullish OB at swing low
+    box.delete(bullOB)
+    bullOB := box.new(bar_index - pivotLen - 1, high[pivotLen], bar_index - pivotLen + 5, low[pivotLen],
+                      border_color=bullOBColor, bgcolor=bullOBColor,
+                      text="OB", text_color=color.new(#26A69A, 30), text_size=size.tiny,
+                      text_halign=text.align_right, text_valign=text.align_center)
+    bullOBValid := true
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ SWING HIGH/LOW LABELS ███
+// ══════════════════════════════════════════════════════════════════════════════
+if showSwings and showOnChart
+    if not na(pivotHigh)
+        label.new(bar_index - pivotLen, pivotHigh, "HH", style=label.style_label_down, 
+                  color=color.new(color.red, 70), textcolor=color.red, size=size.tiny)
+    
+    if not na(pivotLow)
+        label.new(bar_index - pivotLen, pivotLow, "LL", style=label.style_label_up, 
+                  color=color.new(color.green, 70), textcolor=color.green, size=size.tiny)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ BOLLINGER BANDS PLOTTING ███
+// ══════════════════════════════════════════════════════════════════════════════
+plot(showBB ? bbUpper : na, "BB Upper", bbColor, 1)
+plot(showBB ? bbBasis : na, "BB Mid", color.new(bbColor, 70), 1, plot.style_circles)
+plot(showBB ? bbLower : na, "BB Lower", bbColor, 1)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ EMA RIBBON PLOTTING ███
+// ══════════════════════════════════════════════════════════════════════════════
+p1 = plot(showEMAs ? ema8 : na, "EMA Fast", color.new(#00E676, 0), 2)
+p2 = plot(showEMAs ? ema21 : na, "EMA Slow", color.new(#FFA726, 0), 2)
+p3 = plot(showEMAs and gameMode == "SWING" ? ema200 : na, "EMA Trend", color.new(#AB47BC, 0), 2, plot.style_line)
+
+// EMA Ribbon fill
+ribbonColor = bullTrend ? emaBullColor : emaBearColor
+fill(p1, p2, showEMARibbon ? ribbonColor : na, title="EMA Ribbon")
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ SIGNAL ARROWS (DEMO: Limited to 50 bars) ███
+// ══════════════════════════════════════════════════════════════════════════════
+plotshape(showSignals and buySignal and showOnChart ? low : na, "Buy Signal", 
+          shape.triangleup, location.belowbar, signalBuyColor, size=size.small)
+plotshape(showSignals and sellSignal and showOnChart ? high : na, "Sell Signal", 
+          shape.triangledown, location.abovebar, signalSellColor, size=size.small)
+
+// Signal labels with price
+if showSignals and buySignal and showOnChart
+    label.new(bar_index, low, "BUY\n" + str.tostring(close, format.mintick), 
+              style=label.style_label_up, color=signalBuyColor, textcolor=color.white, size=size.tiny)
+
+if showSignals and sellSignal and showOnChart
+    label.new(bar_index, high, "SELL\n" + str.tostring(close, format.mintick), 
+              style=label.style_label_down, color=signalSellColor, textcolor=color.white, size=size.tiny)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ DEMO DASHBOARD ███
+// ══════════════════════════════════════════════════════════════════════════════
+var table dashboard = table.new(position.top_right, 2, 11, bgcolor=color.new(#1a1a2e, 10), border_width=1, border_color=color.new(#00ff00, 50))
+
+if showDashboard and barstate.islast
+    // Header - DEMO badge
+    table.cell(dashboard, 0, 0, "👾 RBFX DEMO", text_color=color.new(#00ff00, 0), text_size=size.normal, bgcolor=color.new(#0a0a15, 0), text_halign=text.align_left)
+    table.cell(dashboard, 1, 0, "⚠️", text_color=color.new(#ff6b6b, 0), text_size=size.normal, bgcolor=color.new(#0a0a15, 0), text_halign=text.align_right)
+    
+    // Mode
+    string modeText = gameMode == "SCALPER" ? "⚡ SCALPER" : gameMode == "DAY TRADER" ? "📊 DAY TRADER" : "🌊 SWING"
+    table.cell(dashboard, 0, 1, "Mode:", text_color=color.gray, text_size=size.small, text_halign=text.align_left)
+    table.cell(dashboard, 1, 1, modeText, text_color=color.white, text_size=size.small, text_halign=text.align_right)
+    
+    // Session Status
+    string sessionStatus = inLondon ? "🔵 LONDON" : inNY ? "🟠 NY" : validSession ? "✅ VALID" : "⏸ WAIT"
+    color sessionCol = inLondon ? color.new(#00CED1, 0) : inNY ? color.new(#FF8C00, 0) : validSession ? color.green : color.gray
+    table.cell(dashboard, 0, 2, "Session:", text_color=color.gray, text_size=size.small, text_halign=text.align_left)
+    table.cell(dashboard, 1, 2, sessionStatus, text_color=sessionCol, text_size=size.small, text_halign=text.align_right)
+    
+    // Trend
+    string trendText = bullTrend ? "▲ BULLISH" : "▼ BEARISH"
+    color trendCol = bullTrend ? color.green : color.red
+    table.cell(dashboard, 0, 3, "Trend:", text_color=color.gray, text_size=size.small, text_halign=text.align_left)
+    table.cell(dashboard, 1, 3, trendText, text_color=trendCol, text_size=size.small, text_halign=text.align_right)
+    
+    // Timeframe
+    table.cell(dashboard, 0, 4, "TF:", text_color=color.gray, text_size=size.small, text_halign=text.align_left)
+    table.cell(dashboard, 1, 4, timeframe.period, text_color=color.white, text_size=size.small, text_halign=text.align_right)
+    
+    // BB Status
+    string bbStatus = touchedLowerBB ? "🎯 LOWER" : touchedUpperBB ? "🎯 UPPER" : "─ NONE"
+    color bbCol = (touchedLowerBB or touchedUpperBB) ? color.new(#64B5F6, 0) : color.gray
+    table.cell(dashboard, 0, 5, "BB:", text_color=color.gray, text_size=size.small, text_halign=text.align_left)
+    table.cell(dashboard, 1, 5, bbStatus, text_color=bbCol, text_size=size.small, text_halign=text.align_right)
+    
+    // Separator
+    table.cell(dashboard, 0, 6, "────────────", text_color=color.new(#00ff00, 70), text_size=size.tiny, text_halign=text.align_left)
+    table.cell(dashboard, 1, 6, "────────────", text_color=color.new(#00ff00, 70), text_size=size.tiny, text_halign=text.align_right)
+    
+    // Demo Limits
+    table.cell(dashboard, 0, 7, "⚠️ LIMITS:", text_color=color.new(#ffaa00, 0), text_size=size.tiny, text_halign=text.align_left)
+    table.cell(dashboard, 1, 7, "50 bars", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    
+    table.cell(dashboard, 0, 8, "• 1 OB max", text_color=color.gray, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(dashboard, 1, 8, "• No FVG", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    
+    table.cell(dashboard, 0, 9, "• No SL/TP", text_color=color.gray, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(dashboard, 1, 9, "• No MTF", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    
+    table.cell(dashboard, 0, 10, "🚀 UPGRADE:", text_color=color.new(#00ff00, 0), text_size=size.tiny, text_halign=text.align_left)
+    table.cell(dashboard, 1, 10, "retailbeastfx.com", text_color=color.new(#00ff00, 0), text_size=size.tiny, text_halign=text.align_right)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ DEMO WATERMARK ███
+// ══════════════════════════════════════════════════════════════════════════════
+var label watermark = na
+if barstate.islast and showOnChart
+    label.delete(watermark)
+    float midPrice = (ta.highest(high, demoLookback) + ta.lowest(low, demoLookback)) / 2
+    watermark := label.new(bar_index - (demoLookback / 2), midPrice, 
+                           "⚠️ DEMO VERSION\nretailbeastfx.com", 
+                           style=label.style_none, 
+                           textcolor=color.new(#ff6b6b, 85), 
+                           size=size.huge)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ ALERTS (DEMO: Basic only) ███
+// ══════════════════════════════════════════════════════════════════════════════
+alertcondition(buySignal, title="RBFX Demo Buy Signal", message="RetailBeastFX DEMO: Buy signal on {{ticker}} at {{close}}")
+alertcondition(sellSignal, title="RBFX Demo Sell Signal", message="RetailBeastFX DEMO: Sell signal on {{ticker}} at {{close}}")
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ PREMIUM FEATURES NOT INCLUDED ███
+// ══════════════════════════════════════════════════════════════════════════════
+// The following features are ONLY available in RetailBeastFX Premium:
+//
+// ✗ Fair Value Gaps (FVG) Detection
+// ✗ Inverse FVG (iFVG) - Continuation zones
+// ✗ Volume Imbalance Detection
+// ✗ Hierarchical Swing Detection (STH/ITH/LTH)
+// ✗ Liquidity Sweep Detection (💧)
+// ✗ ATR-based SL/TP Auto-levels
+// ✗ Ghost Tape Volume Analysis
+// ✗ QPE Oracle Probability Score
+// ✗ MTF Trend Table (M15/H1/H4)
+// ✗ HTF Bias Background Colors
+// ✗ Silver Bullet Time Alerts
+// ✗ Power Hour Highlighting
+// ✗ Swap Time Alerts
+// ✗ PDH/PDL Break Alerts
+// ✗ Best Setup (⭐) Detection
+// ✗ 5-EMA Trailing Stop Line
+// ✗ Timeframe-Adaptive Settings
+// ✗ NY Session High/Low Tracking
+// ✗ Asian Range Display
+// ✗ Session Open Levels (LDN.O, NY.O)
+// ✗ Midnight Open (00:00) Level
+// ✗ Weekly Open Level
+// ✗ 50% Equilibrium Lines
+// ✗ Unlimited Order Blocks
+// ✗ Unlimited Historical Bars
+// ✗ Custom Candle Colors (Ghost Tape)
+//
+// 🚀 Get Premium: retailbeastfx.com
+// ══════════════════════════════════════════════════════════════════════════════

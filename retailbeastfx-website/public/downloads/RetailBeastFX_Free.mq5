@@ -2,11 +2,12 @@
 //|                                       RetailBeast_AQT_Modes.mq5 |
 //|                                      Copyright 2024, RetailBeast |
 //|       Professional SMC + Killzones (Universal Broker Support)    |
+//|       v7.1: Alpha Edge A+ Strategies (Trend, Reversion, Breakout)|
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2024, RetailBeast"
 #property link      "https://www.retailbeast.com"
-#property version   "7.00"
-#property description "v7.0 Battle Ready: Alerts, GMT Offset, Anti-Repaint"
+#property version   "7.10"
+#property description "v7.1 Alpha Edge: A+ Strategies, RSI Mean Reversion, 200 SMA Trend Filter"
 #property strict
 #property indicator_chart_window
 #property indicator_buffers 9
@@ -92,6 +93,16 @@ enum ENUM_DISPLAY_MODE
    DISPLAY_HISTORICAL = 1  // Historical (Full History)
 };
 
+//--- Alpha Edge A+ Strategy Selection
+enum ENUM_ALPHA_STRATEGY
+{
+   ALPHA_OFF = 0,               // Off (Use Original Signals)
+   ALPHA_TREND_FOLLOWING = 1,   // Trend Following (200 SMA)
+   ALPHA_MEAN_REVERSION = 2,    // Mean Reversion (RSI Extremes)
+   ALPHA_SWING_PULLBACKS = 3,   // Swing Pullbacks (Fib + EMA)
+   ALPHA_BREAKOUT = 4           // Breakout Trading (Volatility)
+};
+
 //+------------------------------------------------------------------+
 //| INPUT PARAMETERS                                                  |
 //+------------------------------------------------------------------+
@@ -173,6 +184,15 @@ input int InpArrowSize = 3;                  // Arrow Size (1-5)
 input color InpPivotHighColor = C'80,180,140';  // Pivot High Color (Soft Mint)
 input color InpPivotLowColor = C'180,100,110';  // Pivot Low Color (Soft Rose)
 
+input group "=== ALPHA EDGE STRATEGY ==="
+input ENUM_ALPHA_STRATEGY InpAlphaStrategy = ALPHA_OFF;  // A+ Strategy Mode
+input int InpRSIPeriod = 2;                   // RSI Period (2 for Mean Reversion)
+input int InpRSIOversold = 15;                // RSI Oversold Level (Buy Zone)
+input int InpRSIOverbought = 85;              // RSI Overbought Level (Sell Zone)
+input int InpATRPeriod = 14;                  // ATR Period (Breakout Volatility)
+input double InpATRMultiplier = 1.5;          // ATR Multiplier (Stop Distance)
+input bool InpShowAlphaLabels = true;         // Show Alpha Edge Labels
+
 //+------------------------------------------------------------------+
 //| STRUCTURES                                                        |
 //+------------------------------------------------------------------+
@@ -233,6 +253,14 @@ int handleEMAFast;
 int handleEMASlow;
 int handleEMATrend;
 int handleEMATrail;
+int handleRSI;      // Alpha Edge: RSI for Mean Reversion
+int handleATR;      // Alpha Edge: ATR for Breakout/Stops
+int handleSMA200;   // Alpha Edge: 200 SMA for Trend Filter
+
+// Alpha Edge buffers
+double RSIBuffer[];
+double ATRBuffer[];
+double SMA200Buffer[];
 
 string dashboardName = "AQT_Dashboard";
 string infoName = "AQT_Info";
@@ -296,9 +324,15 @@ int OnInit()
    handleEMATrend = iMA(_Symbol, PERIOD_CURRENT, InpEMATrend, 0, MODE_EMA, PRICE_CLOSE);
    handleEMATrail = iMA(_Symbol, PERIOD_CURRENT, InpEMATrail, 0, MODE_EMA, PRICE_CLOSE);
    
+   // Alpha Edge indicators
+   handleRSI = iRSI(_Symbol, PERIOD_CURRENT, InpRSIPeriod, PRICE_CLOSE);
+   handleATR = iATR(_Symbol, PERIOD_CURRENT, InpATRPeriod);
+   handleSMA200 = iMA(_Symbol, PERIOD_D1, 200, 0, MODE_SMA, PRICE_CLOSE);  // Daily 200 SMA for trend filter
+   
    if(handleBB == INVALID_HANDLE || handleEMAFast == INVALID_HANDLE || 
       handleEMASlow == INVALID_HANDLE || handleEMATrend == INVALID_HANDLE ||
-      handleEMATrail == INVALID_HANDLE)
+      handleEMATrail == INVALID_HANDLE || handleRSI == INVALID_HANDLE ||
+      handleATR == INVALID_HANDLE || handleSMA200 == INVALID_HANDLE)
    {
       Print("Error creating indicator handles!");
       return(INIT_FAILED);
@@ -310,12 +344,18 @@ int OnInit()
    ArrayResize(killzones, 0);
    
    CreateDashboard();
-   IndicatorSetString(INDICATOR_SHORTNAME, "RetailBeast AQT [" + GetModeName() + "]");
+   
+   // Update indicator name based on mode
+   string modeName = GetModeName();
+   if(InpAlphaStrategy != ALPHA_OFF)
+      modeName = modeName + " | Alpha: " + GetAlphaStrategyName();
+   IndicatorSetString(INDICATOR_SHORTNAME, "RetailBeast AQT [" + modeName + "]");
    
    string alertStatus = InpEnableAlerts ? "ON" : "OFF";
    string repaintStatus = InpConfirmedSignalsOnly ? "Protected" : "Aggressive";
-   Print(StringFormat("RetailBeast AQT v7.0 initialized | GMT%+d | Alerts: %s | Signals: %s",
-                       InpGMTOffset, alertStatus, repaintStatus));
+   string alphaStatus = InpAlphaStrategy != ALPHA_OFF ? GetAlphaStrategyName() : "OFF";
+   Print(StringFormat("RetailBeast AQT v7.1 initialized | GMT%+d | Alerts: %s | Alpha Edge: %s",
+                       InpGMTOffset, alertStatus, alphaStatus));
    
    return(INIT_SUCCEEDED);
 }
@@ -330,6 +370,11 @@ void OnDeinit(const int reason)
    if(handleEMASlow != INVALID_HANDLE) IndicatorRelease(handleEMASlow);
    if(handleEMATrend != INVALID_HANDLE) IndicatorRelease(handleEMATrend);
    if(handleEMATrail != INVALID_HANDLE) IndicatorRelease(handleEMATrail);
+   
+   // Alpha Edge handles
+   if(handleRSI != INVALID_HANDLE) IndicatorRelease(handleRSI);
+   if(handleATR != INVALID_HANDLE) IndicatorRelease(handleATR);
+   if(handleSMA200 != INVALID_HANDLE) IndicatorRelease(handleSMA200);
    
    ObjectsDeleteAll(0, prefix);
    ObjectDelete(0, dashboardName);
@@ -1184,6 +1229,22 @@ string GetModeName()
       case MODE_SCALPER:   return "SCALPER";
       case MODE_DAYTRADER: return "DAYTRADER";
       case MODE_SWING:     return "SWING";
+   }
+   return "UNKNOWN";
+}
+
+//+------------------------------------------------------------------+
+//| Get Alpha Edge Strategy Name                                       |
+//+------------------------------------------------------------------+
+string GetAlphaStrategyName()
+{
+   switch(InpAlphaStrategy)
+   {
+      case ALPHA_OFF:             return "OFF";
+      case ALPHA_TREND_FOLLOWING: return "Trend Follow";
+      case ALPHA_MEAN_REVERSION:  return "Mean Reversion";
+      case ALPHA_SWING_PULLBACKS: return "Swing Pullback";
+      case ALPHA_BREAKOUT:        return "Breakout";
    }
    return "UNKNOWN";
 }
