@@ -1,0 +1,197 @@
+// RetailBeastFX Volume Companion [v1.0 Beast Mode]
+// Based on BigBeluga's Liquidity Spectrum Visualizer
+// Enhanced with session-anchored profiles & SMC confluence
+// © RetailBeast 2025 | CC BY-NC-SA 4.0
+
+//@version=5
+indicator("RetailBeastFX Volume [Beast Mode]", shorttitle="RBFX Vol", overlay=true, max_boxes_count=500, max_labels_count=500)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ 🚀 QUICK START ███
+// ══════════════════════════════════════════════════════════════════════════════
+string modeGroup = "🚀 Quick Start"
+string presetTooltip = "🔥 BEAST MODE: Killzone-anchored profiles\n📈 FULL RANGE: 200-bar lookback\n✨ CLEAN: Bubbles only\n⚙️ CUSTOM: Your settings"
+string preset = input.string("🔥 Beast Mode", "Preset", options=["🔥 Beast Mode", "📈 Full Range", "✨ Clean", "⚙️ Custom"], group=modeGroup, tooltip=presetTooltip)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ 📊 VOLUME PROFILE ███
+// ══════════════════════════════════════════════════════════════════════════════
+string vpGroup = "📊 Volume Profile"
+bool showVolumeProfile = input.bool(true, "Show Volume Profile", group=vpGroup)
+int lookback = input.int(200, "Lookback Bars", minval=50, maxval=500, group=vpGroup)
+string profileAnchor = input.string("Killzone Session", "Anchor Mode", options=["Killzone Session", "Rolling Bars", "Visible Range"], group=vpGroup, tooltip="Beast Mode uses Killzone anchoring")
+int vpBins = input.int(50, "Profile Resolution", minval=20, maxval=100, group=vpGroup)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ 🫧 VOLUME BUBBLES ███
+// ══════════════════════════════════════════════════════════════════════════════
+string bubbleGroup = "🫧 Volume Bubbles"
+bool showBubbles = input.bool(true, "Show Volume Bubbles", group=bubbleGroup)
+float volThreshold = input.float(1.5, "Spike Threshold (σ)", minval=0.5, maxval=5.0, step=0.1, group=bubbleGroup, tooltip="Standard deviations above mean")
+bool labelSpikes = input.bool(true, "Label Huge Spikes", group=bubbleGroup)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ 💧 LIQUIDITY LEVELS ███
+// ══════════════════════════════════════════════════════════════════════════════
+string liqGroup = "💧 Liquidity Levels"
+bool showLiqLevels = input.bool(true, "Show HVN Lines", group=liqGroup)
+int hvnThreshold = input.int(30, "HVN Threshold (%)", minval=10, maxval=50, group=liqGroup, tooltip="Volume node strength to display")
+bool extendHVN = input.bool(true, "Extend Lines Right", group=liqGroup)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ ⏰ SESSION SETTINGS (BEAST MODE) ███
+// ══════════════════════════════════════════════════════════════════════════════
+string sessGroup = "⏰ Sessions (Beast Mode)"
+string londonSession = input.session("0300-0600", "London (EST)", group=sessGroup)
+string nySession = input.session("0800-1100", "New York (EST)", group=sessGroup)
+string silverBulletSession = input.session("1000-1100", "Silver Bullet (EST)", group=sessGroup)
+bool highlightKillzones = input.bool(true, "Highlight Killzone Nodes", group=sessGroup)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ 🎨 APPEARANCE ███
+// ══════════════════════════════════════════════════════════════════════════════
+string visGroup = "🎨 Appearance"
+color bullColor = input.color(#22b16c, "Bull Color", group=visGroup, inline="colors")
+color bearColor = input.color(#dd7e2a, "Bear Color", group=visGroup, inline="colors")
+int profileOffset = input.int(-50, "Profile Offset", minval=-200, maxval=0, group=visGroup)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ CALCULATIONS ███
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Check if within lookback range
+bool inRange = last_bar_index - bar_index < lookback
+
+// Session detection
+inLondon = not na(time(timeframe.period, londonSession, "America/New_York"))
+inNY = not na(time(timeframe.period, nySession, "America/New_York"))
+inSilverBullet = not na(time(timeframe.period, silverBulletSession, "America/New_York"))
+inKillzone = inLondon or inNY
+
+// Normalized volume (standard deviations from mean)
+float volStdev = ta.stdev(volume, 200)
+float volSma = ta.sma(volume, 200)
+float nVol = volStdev > 0 ? (volume - volSma) / volStdev : 0
+
+// Volume spike classification
+bool tinyVol = nVol < 1
+bool smallVol = nVol >= 1 and nVol < 2
+bool normalVol = nVol >= 2 and nVol < 3
+bool largeVol = nVol >= 3 and nVol < 4
+bool hugeVol = nVol >= 4
+
+// Candle direction color
+color candleColor = close > open ? bullColor : bearColor
+color gradientColor = color.from_gradient(nVol, 0, 5, color.new(candleColor, 50), candleColor)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ VOLUME BUBBLES ███
+// ══════════════════════════════════════════════════════════════════════════════
+
+if showBubbles
+    // Plot bubbles with size based on volume intensity
+    plotshape(inRange and tinyVol ? hlc3 : na, "", shape.circle, location.absolute, gradientColor, 0, size=size.tiny)
+    plotshape(inRange and smallVol ? hlc3 : na, "", shape.circle, location.absolute, gradientColor, 0, size=size.small)
+    plotshape(inRange and normalVol ? hlc3 : na, "", shape.circle, location.absolute, gradientColor, 0, size=size.normal)
+    plotshape(inRange and largeVol ? hlc3 : na, "", shape.circle, location.absolute, gradientColor, 0, size=size.large)
+    plotshape(inRange and hugeVol ? hlc3 : na, "", shape.circle, location.absolute, gradientColor, 0, size=size.huge)
+
+// Label huge volume spikes
+if hugeVol and inRange and labelSpikes
+    string volText = str.tostring(volume, format.volume)
+    color lblColor = inKillzone and highlightKillzones ? color.new(#FFD700, 0) : color.new(#FFFFFF, 0)
+    label.new(bar_index, hlc3, volText, xloc.bar_index, yloc.price, color.new(#000000, 50), label.style_label_center, lblColor, size.small)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ VOLUME PROFILE (On Last Bar) ███
+// ══════════════════════════════════════════════════════════════════════════════
+
+if barstate.islast and showVolumeProfile
+    // Collect high/low range
+    var float[] hlArray = array.new_float()
+    array.clear(hlArray)
+    
+    for j = 0 to lookback - 1
+        array.push(hlArray, high[j])
+        array.push(hlArray, low[j])
+    
+    float rangeHigh = array.max(hlArray)
+    float rangeLow = array.min(hlArray)
+    float step = (rangeHigh - rangeLow) / vpBins
+    
+    // Initialize bins
+    var float[] bins = array.new_float(vpBins, 0.0)
+    for i = 0 to vpBins - 1
+        array.set(bins, i, 0.0)
+    
+    // Fill bins with volume
+    for i = 0 to vpBins - 1
+        float lower = rangeLow + step * i
+        float upper = lower + step
+        
+        for j = 0 to lookback - 1
+            float c = close[j]
+            if c >= lower - step and c <= upper + step
+                // Beast Mode: Weight killzone volume higher
+                float volWeight = (inKillzone[j] and highlightKillzones) ? volume[j] * 1.5 : volume[j]
+                array.set(bins, i, array.get(bins, i) + volWeight)
+    
+    float maxBin = array.max(bins)
+    
+    // Draw profile boxes and HVN lines
+    var box[] vpBoxes = array.new_box()
+    var line[] hvnLines = array.new_line()
+    
+    // Clean previous drawings
+    for b in vpBoxes
+        box.delete(b)
+    for l in hvnLines
+        line.delete(l)
+    array.clear(vpBoxes)
+    array.clear(hvnLines)
+    
+    for i = 0 to vpBins - 1
+        float lower = rangeLow + step * i
+        float upper = lower + step
+        float mid = math.avg(upper, lower)
+        int barWidth = int(array.get(bins, i) / maxBin * 50)
+        
+        // Color based on price position
+        color nodeColor = close > mid ? bullColor : bearColor
+        color vpColor = color.from_gradient(barWidth, 0, 50, color.new(nodeColor, 90), nodeColor)
+        
+        // Draw volume profile box
+        array.push(vpBoxes, box.new(bar_index + profileOffset, upper, bar_index + barWidth + profileOffset, lower, na, bgcolor=vpColor))
+        
+        // Draw HVN lines for strong nodes
+        int hvnPercent = int(barWidth * 2)  // Convert to percentage
+        if hvnPercent >= hvnThreshold and showLiqLevels
+            int lineWidth = hvnPercent < 35 ? 1 : hvnPercent < 45 ? 2 : 3
+            color lineColor = color.from_gradient(hvnPercent, hvnThreshold, 50, color.new(nodeColor, 70), nodeColor)
+            int rightExtend = extendHVN ? bar_index + 20 : bar_index + barWidth + profileOffset
+            array.push(hvnLines, line.new(bar_index + profileOffset, mid, rightExtend, mid, color=lineColor, width=lineWidth))
+    
+    // Mark range extremes
+    for j = 0 to lookback - 1
+        if high[j] == rangeHigh
+            label.new(bar_index - j, high[j], str.tostring(high[j], format.mintick), style=label.style_label_down, color=bearColor, textcolor=color.white, size=size.tiny)
+        if low[j] == rangeLow
+            label.new(bar_index - j, low[j], str.tostring(low[j], format.mintick), style=label.style_label_up, color=bullColor, textcolor=color.white, size=size.tiny)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ KILLZONE VOLUME SURGE DETECTION ███
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Highlight when volume spike occurs during killzone (Beast Mode feature)
+bool killzoneSurge = inKillzone and (largeVol or hugeVol) and highlightKillzones
+bgcolor(killzoneSurge ? color.new(#FFD700, 90) : na, title="Killzone Surge")
+
+// Plot hidden for alerts
+plot(killzoneSurge ? close : na, "Killzone Volume Surge", display=display.none)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ ALERTS ███
+// ══════════════════════════════════════════════════════════════════════════════
+
+alertcondition(hugeVol, title="Huge Volume Spike", message="🫧 RBFX Volume: Huge volume spike detected!")
+alertcondition(killzoneSurge, title="Killzone Volume Surge", message="🔥 RBFX Volume: Volume surge during killzone!")
