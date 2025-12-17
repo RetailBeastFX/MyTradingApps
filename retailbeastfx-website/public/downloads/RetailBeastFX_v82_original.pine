@@ -74,6 +74,9 @@ int maxSBCount = input.int(3, "Max SBs", minval=1, maxval=10, group=smcGroup)
 bool showVI = input.bool(false, "Volume Imbalance", group=smcGroup, tooltip="2-candle wick gaps")
 int maxVICount = input.int(3, "Max VIs", minval=1, maxval=10, group=smcGroup)
 
+bool show1stFVG = input.bool(true, "1st Presented FVG", group=smcGroup, tooltip="ICT 2025: First FVG after 9:30 AM NY open - key daily reference")
+color firstFVGColor = input.color(color.new(#FFD700, 70), "1st FVG Color", group=smcGroup)
+
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ 📍 KEY LEVELS ███
 // ══════════════════════════════════════════════════════════════════════════════
@@ -843,11 +846,7 @@ if showSB and bar_index > 3 and barstate.isconfirmed and showOnChart
     
     if sbDetected
         // Draw the SB zone using the SB candle's body range
-        sbBox = box.new(bar_index - 1, sbBodyTop, bar_index + 30, sbBodyBottom, 
-                        border_color=sbColor, border_width=2, bgcolor=sbColor, 
-                        text="SB", text_color=color.new(#FFB400, 0), 
-                        text_size=size.tiny, text_halign=text.align_left, 
-                        text_valign=text.align_center)
+        sbBox = box.new(bar_index - 1, sbBodyTop, bar_index + 30, sbBodyBottom, border_color=sbColor, border_width=2, bgcolor=sbColor, text="SB", text_color=color.new(#FFB400, 0), text_size=size.tiny, text_halign=text.align_left, text_valign=text.align_center)
         array.push(suspensionBlocks, sbBox)
         if array.size(suspensionBlocks) > maxSBCount
             box.delete(array.shift(suspensionBlocks))
@@ -885,6 +884,70 @@ if showFVG and bar_index > 2 and showOnChart
         array.push(bearFVGs, fvgBox)
         if array.size(bearFVGs) > maxFVGCount
             box.delete(array.shift(bearFVGs))
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ 1ST PRESENTED FVG (ICT 2025 - Opening Range Reference) ███
+// ══════════════════════════════════════════════════════════════════════════════
+// The FIRST FVG formed after 9:30 AM NY within the Opening Range (until 10:00 AM)
+// Acts as a key daily reference level - extend until 3:45 PM NY
+
+var box firstPresentedFVGBox = na
+var bool foundFirstFVGToday = false
+var int lastFirstFVGDay = -1
+
+// Reset tracking at start of new day
+if dayofweek != dayofweek[1]
+    foundFirstFVGToday := false
+    if not na(firstPresentedFVGBox)
+        box.delete(firstPresentedFVGBox)
+        firstPresentedFVGBox := na
+    lastFirstFVGDay := dayofweek
+
+// NY time check (Opening Range: 9:30 AM - 10:00 AM NY = 14:30 - 15:00 UTC)
+// Using session to check if we're in opening range window
+float nyHour = hour(time, "America/New_York")
+float nyMinute = minute(time, "America/New_York")
+float nyTimeDecimal = nyHour + nyMinute / 60.0
+
+// Opening Range: 9:30 AM to 10:00 AM NY (9.5 to 10.0 in decimal)
+bool isOpeningRange = nyTimeDecimal >= 9.5 and nyTimeDecimal < 10.0
+
+// Extend zone end time until 3:45 PM NY (adjust box right edge)
+bool shouldExtend = nyTimeDecimal >= 9.5 and nyTimeDecimal < 15.75
+
+if show1stFVG and bar_index > 2 and not foundFirstFVGToday and isOpeningRange and showOnChart
+    float minGapSize1st = atrValue * 0.1
+    
+    // Bullish FVG check: low > high[2] (gap up)
+    bool bullFVG1st = low > high[2]
+    float bullGap1st = low - high[2]
+    
+    // Bearish FVG check: high < low[2] (gap down)
+    bool bearFVG1st = high < low[2]
+    float bearGap1st = low[2] - high
+    
+    // VALIDATION: FVG candle [1] must break range of candles before it
+    // For bullish: candle [1] high > previous candles high
+    // For bearish: candle [1] low < previous candles low
+    bool bullBreaksRange = high[1] > math.max(high[2], high[3])
+    bool bearBreaksRange = low[1] < math.min(low[2], low[3])
+    
+    // Detect first valid FVG
+    if bullFVG1st and bullGap1st >= minGapSize1st and bullBreaksRange
+        foundFirstFVGToday := true
+        float fvgTop1st = low
+        float fvgBottom1st = high[2]
+        firstPresentedFVGBox := box.new(bar_index - 1, fvgTop1st, bar_index + 200, fvgBottom1st, border_color=firstFVGColor, border_width=2, border_style=line.style_solid, bgcolor=firstFVGColor, text="1st FVG", text_color=color.new(#FFD700, 0), text_size=size.small, text_halign=text.align_left, text_valign=text.align_center)
+    
+    if bearFVG1st and bearGap1st >= minGapSize1st and bearBreaksRange and not foundFirstFVGToday
+        foundFirstFVGToday := true
+        float fvgTop1st = low[2]
+        float fvgBottom1st = high
+        firstPresentedFVGBox := box.new(bar_index - 1, fvgTop1st, bar_index + 200, fvgBottom1st, border_color=firstFVGColor, border_width=2, border_style=line.style_solid, bgcolor=firstFVGColor, text="1st FVG", text_color=color.new(#FFD700, 0), text_size=size.small, text_halign=text.align_left, text_valign=text.align_center)
+
+// Keep extending the box right edge as long as we're in the trading day
+if not na(firstPresentedFVGBox) and shouldExtend
+    box.set_right(firstPresentedFVGBox, bar_index + 1)
 
 // iFVG Detection and Mitigation Cleanup
 // iFVG = when price ENTERS and FILLS 50%+ of the gap (true mitigation)
