@@ -158,18 +158,18 @@ if barstate.islast and showVolumeProfile
         float mid = math.avg(upper, lower)
         int barWidth = int(array.get(bins, i) / maxBin * 50)
         
-        // Color based on price position
+        // Color based on price position (more transparent for cleaner overlay)
         color nodeColor = close > mid ? bullColor : bearColor
-        color vpColor = color.from_gradient(barWidth, 0, 50, color.new(nodeColor, 90), nodeColor)
+        color vpColor = color.from_gradient(barWidth, 0, 50, color.new(nodeColor, 95), color.new(nodeColor, 70))
         
         // Draw volume profile box
         array.push(vpBoxes, box.new(bar_index + profileOffset, upper, bar_index + barWidth + profileOffset, lower, na, bgcolor=vpColor))
         
-        // Draw HVN lines for strong nodes
+        // Draw HVN lines for strong nodes (more transparent)
         int hvnPercent = int(barWidth * 2)  // Convert to percentage
         if hvnPercent >= hvnThreshold and showLiqLevels
             int lineWidth = hvnPercent < 35 ? 1 : hvnPercent < 45 ? 2 : 3
-            color lineColor = color.from_gradient(hvnPercent, hvnThreshold, 50, color.new(nodeColor, 70), nodeColor)
+            color lineColor = color.from_gradient(hvnPercent, hvnThreshold, 50, color.new(nodeColor, 85), color.new(nodeColor, 50))
             int rightExtend = extendHVN ? bar_index + 20 : bar_index + barWidth + profileOffset
             array.push(hvnLines, line.new(bar_index + profileOffset, mid, rightExtend, mid, color=lineColor, width=lineWidth))
     

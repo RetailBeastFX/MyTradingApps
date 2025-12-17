@@ -3,94 +3,86 @@
 
 ---
 
-Welcome to the institutional liquidity layer. **RBFX Volume** is the perfect companion to RetailBeastFX v8.4 – revealing **where smart money actually traded**, not just where price went.
+The perfect liquidity sidekick for RetailBeastFX v8.4 is here. Built on BigBeluga's proven volume visualizer, this companion transforms raw volume data into **actionable institutional footprint intelligence** – all tuned for 2025 ICT/SMC trading.
 
 ---
 
-## 🔥 Beast Mode Features
+## 🔥 Major Highlight: Beast Mode Integration
 
-### Session-Anchored Volume Profiles
-- **Killzone Weighting:** London/NY volume boosted 1.5x in profile calculations
-- **HVN Liquidity Lines:** High-volume nodes with gradient coloring + right extension
-- **Profile Position:** Anchored left of current price for clean chart view
+**Beast Mode preset (default)** anchors everything to killzone sessions (London/NY + Silver Bullet) for maximum relevance.
 
-### Volume Bubbles
-- **Size-Graded Circles:** Tiny → Huge based on σ (standard deviations from mean)
-- **Gradient Colors:** Bull/bear based on candle direction
-- **Spike Labels:** Huge volume prints labeled with actual volume
+Volume during killzones is **weighted 1.5x** when building the profile – HVNs now reflect real smart money activity windows, not diluted rolling data.
 
-### Killzone Surge Detection
-- **Golden Background:** Highlights when volume spikes during London/NY/Silver Bullet
-- **Instant Visual Cue:** Absorption or breakout confirmation at a glance
-
----
-
-## 📊 Quick Start Presets
+### One-Click Presets
 
 | Preset | Description |
 |--------|-------------|
-| **🔥 Beast Mode** | Killzone-anchored profiles + all features enabled |
-| **📈 Full Range** | 200-bar rolling lookback, no session weighting |
-| **✨ Clean** | Bubbles only – minimal footprint |
-| **⚙️ Custom** | Your personal configuration |
+| **🔥 Beast Mode** | Killzone-focused, confluence-ready |
+| **📈 Full Range** | Classic 200-bar rolling profile |
+| **✨ Clean** | Bubbles only for minimal charts |
+| **⚙️ Custom** | Full control |
 
 ---
 
-## 🎯 Beast Mode Settings (Default)
+## 🫧 Volume Bubbles – Institutional Push Detector
 
-| Setting | Value | Purpose |
-|---------|-------|---------|
-| Volume Profile | ON | Shows HVN horizontal bars |
-| Lookback | 200 bars | Rolling range for profile |
-| Anchor Mode | Killzone Session | Weights London/NY volume |
-| Profile Resolution | 50 bins | Detail level of profile |
-| Volume Bubbles | ON | Size-graded circles on candles |
-| Spike Threshold | 1.5σ | Standard deviations for classification |
-| Label Spikes | ON | Volume text on huge spikes |
-| HVN Lines | ON | Horizontal liquidity levels |
-| HVN Threshold | 30% | Minimum strength to display |
-| Extend Lines | ON | HVN lines extend right |
-| Highlight Killzones | ON | Gold glow on killzone surges |
+- Normalized volume bubbles sized by **standard deviations** (tiny → huge)
+- Gradient coloring based on candle direction
+- **Huge spikes labeled** with actual volume + golden glow during killzones = instant absorption/raid alerts
+- **Golden background flash** on killzone volume surges (large/huge spikes)
 
 ---
 
-## 🔗 Synergy with RBFX v8.4
+## 💧 Liquidity Levels – Smart HVN Engine
 
-Run both indicators together for **structure + footprint** confluence:
-
-| RBFX v8.4 | + | RBFX Volume |
-|-----------|---|-------------|
-| OBs/FVGs/SBs mark structure | ↔ | HVNs show where volume clustered |
-| BB extremes = reversal zones | ↔ | Bubbles = absorption confirmation |
-| BEST SETUP arrows | ↔ | Killzone surge = go time |
-| Fractal Filter | ↔ | HVN overlap = mega confluence |
-
-### Example Trade Setup
-1. Price raids lower BB → touches discount OB + Suspension Block
-2. Your **⭐ BEST SETUP** arrow fires
-3. Volume shows: Huge bubble at low + thick HVN in OB zone + gold surge
-4. **Result:** High-conviction entry, tight SL, monster TP
+- Dynamic horizontal **volume profile** with gradient boxes
+- Strong **HVN lines** drawn only above threshold (default 30%) with variable thickness
+- Optional **right extension** for future reference
+- Extremes (range high/low) clearly labeled
 
 ---
 
-## 🔔 Alerts
+## ⏰ Session-Aware Beast Features
 
-| Alert | Trigger |
-|-------|---------|
-| **Huge Volume Spike** | Volume ≥ 4σ above mean |
-| **Killzone Volume Surge** | Large/Huge spike during London/NY |
+- Full **London/NY/Silver Bullet** detection (EST timezone)
+- **Highlight killzone nodes** option – makes Silver Bullet reversals pop
+- Seamless pairing with RBFX v8.4 (same session logic, colors, timing)
+
+---
+
+## 🎨 Appearance & Performance
+
+- Clean **offset profile** (default -50) to avoid chart clutter
+- Bull/bear gradient colors matching RBFX aesthetic
+- Efficient array management – **no lag, no repainting**
+
+---
+
+## 🔗 Why This Completes the System
+
+| RBFX v8.4 | RBFX Volume |
+|-----------|-------------|
+| **The Structure** | **The Footprint** |
+| OBs, FVGs, Suspension Blocks | Where volume clustered (HVNs) |
+| BB extremes, ⭐ BEST SETUP signals | When institutions stepped in |
+| SMC confluence zones | Confirmation of absorption during raids |
+
+> **Together?** You see *what* smart money is doing (structure) and *how* they're doing it (volume footprint).
 
 ---
 
 ## 💀 The Bottom Line
 
-**RBFX v8.4** shows you *where* smart money operates.
-**RBFX Volume** shows you *when* they showed up.
+**No more guessing if a rejection has conviction.**
+Just high-probability, volume-confirmed confluence.
 
-Together? **X-ray vision into institutional intent.**
+```
+Load both → Select 🔥 Beast Mode on each → Hunt during killzones → Print.
+```
 
 ---
 
-*The beasts are watching the tape now.* 🦁
+**The beast pack is complete.**
+**2026 belongs to us.**
 
-— **RetailBeast Team**
+— **RetailBeast Team** 🦁
