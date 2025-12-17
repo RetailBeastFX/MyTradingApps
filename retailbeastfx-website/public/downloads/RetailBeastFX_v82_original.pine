@@ -60,6 +60,7 @@ bool showSwings = input.bool(true, "Swing Points", group=smcGroup)
 int maxOBCount = input.int(2, "Max OBs", minval=1, maxval=10, group=smcGroup)
 bool deleteOBOnMitigation = input.bool(true, "Auto-Remove Mitigated", group=smcGroup, tooltip="Delete OB when price fills it")
 int pivotLen = input.int(5, "Pivot Sensitivity", minval=2, maxval=20, group=smcGroup)
+int obMinConsecutive = input.int(2, "OB Min Consecutive", minval=1, maxval=5, group=smcGroup, tooltip="Min consecutive same-direction candles for valid OB (ICT quality filter)")
 
 bool showFVG = input.bool(false, "Fair Value Gaps", group=smcGroup, tooltip="Imbalance zones (toggle ON)")
 bool showIFVG = input.bool(false, "Show iFVG", group=smcGroup, tooltip="Inverse FVG when gap is filled")
@@ -1351,36 +1352,62 @@ checkOBOverlap(box[] obArray, float obHigh, float obLow) =>
                 break
     overlaps
 
-// Find last bearish candle before swing low (Bullish OB)
-// Filter: OB candle must be at least 30% of ATR (significant move)
+// Find consecutive bearish candles before swing low (Bullish OB)
+// ICT Quality Filter: Requires 2+ down-close candles (building sell pressure = exhaustion zone)
 float minOBSize = atrValue * 0.3
+
+// Helper: count consecutive bearish candles starting at index
+countConsecutiveBearish(int startIdx) =>
+    int count = 0
+    for k = startIdx to startIdx + 5
+        if close[k] < open[k]
+            count += 1
+        else
+            break
+    count
+
+// Helper: count consecutive bullish candles starting at index  
+countConsecutiveBullish(int startIdx) =>
+    int count = 0
+    for k = startIdx to startIdx + 5
+        if close[k] > open[k]
+            count += 1
+        else
+            break
+    count
 
 if showOB and newSwingLow
     for i = pivotLen to pivotLen + 10
         if close[i] < open[i]
-            float obHigh = high[i]
-            float obLow = low[i]
-            float obSize = obHigh - obLow
+            float obHigh = math.max(open[i], close[i])  // Use body high (not wick) per ICT
+            float obLow = math.min(open[i], close[i])   // Use body low (not wick) per ICT
+            float obSize = high[i] - low[i]
             bool hasOverlap = checkOBOverlap(bullOBBoxes, obHigh, obLow)
             bool isSigificant = obSize >= minOBSize
-            if not hasOverlap and isSigificant
-                obBox = box.new(bar_index - i, obHigh, bar_index + 20, obLow, border_color=bullOBColor, border_style=line.style_dotted, bgcolor=color.new(bullOBColor, 92), text="FRESH", text_color=color.new(#26A69A, 30), text_size=size.tiny, text_halign=text.align_right, text_valign=text.align_top)
+            int consecCount = countConsecutiveBearish(i)
+            bool hasConsecutive = consecCount >= obMinConsecutive
+            if not hasOverlap and isSigificant and hasConsecutive
+                string obLabel = consecCount >= 3 ? "PRIME" : "FRESH"
+                obBox = box.new(bar_index - i, obHigh, bar_index + 20, obLow, border_color=bullOBColor, border_style=line.style_dotted, bgcolor=color.new(bullOBColor, 92), text=obLabel, text_color=color.new(#26A69A, 30), text_size=size.tiny, text_halign=text.align_right, text_valign=text.align_top)
                 array.push(bullOBBoxes, obBox)
                 if array.size(bullOBBoxes) > maxOBCount
                     box.delete(array.shift(bullOBBoxes))
             break
 
-// Find last bullish candle before swing high (Bearish OB)
+// Find consecutive bullish candles before swing high (Bearish OB)
 if showOB and newSwingHigh
     for i = pivotLen to pivotLen + 10
         if close[i] > open[i]
-            float obHigh = high[i]
-            float obLow = low[i]
-            float obSize = obHigh - obLow
+            float obHigh = math.max(open[i], close[i])  // Use body high per ICT
+            float obLow = math.min(open[i], close[i])   // Use body low per ICT
+            float obSize = high[i] - low[i]
             bool hasOverlap = checkOBOverlap(bearOBBoxes, obHigh, obLow)
             bool isSigificant = obSize >= minOBSize
-            if not hasOverlap and isSigificant
-                obBox = box.new(bar_index - i, obHigh, bar_index + 20, obLow, border_color=bearOBColor, border_style=line.style_dotted, bgcolor=color.new(bearOBColor, 92), text="FRESH", text_color=color.new(#EF5350, 30), text_size=size.tiny, text_halign=text.align_right, text_valign=text.align_bottom)
+            int consecCount = countConsecutiveBullish(i)
+            bool hasConsecutive = consecCount >= obMinConsecutive
+            if not hasOverlap and isSigificant and hasConsecutive
+                string obLabel = consecCount >= 3 ? "PRIME" : "FRESH"
+                obBox = box.new(bar_index - i, obHigh, bar_index + 20, obLow, border_color=bearOBColor, border_style=line.style_dotted, bgcolor=color.new(bearOBColor, 92), text=obLabel, text_color=color.new(#EF5350, 30), text_size=size.tiny, text_halign=text.align_right, text_valign=text.align_bottom)
                 array.push(bearOBBoxes, obBox)
                 if array.size(bearOBBoxes) > maxOBCount
                     box.delete(array.shift(bearOBBoxes))
