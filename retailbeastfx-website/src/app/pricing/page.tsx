@@ -18,7 +18,7 @@ interface PricingTier {
 
 const pricingTiers: PricingTier[] = [
     {
-        name: 'Free',
+        name: 'MT5 Free',
         price: '$0',
         period: 'forever',
         description: 'Full MT5 indicator - get started free',
@@ -36,29 +36,30 @@ const pricingTiers: PricingTier[] = [
         ctaVariant: 'outline',
     },
     {
-        name: 'Premium',
-        price: '$97',
-        period: 'one-time',
-        description: 'Full ICT/SMC indicator suite',
+        name: 'TradingView Suite',
+        price: '$0',
+        period: 'limited time',
+        description: '🔥 Beast Mode Edition - FREE during launch!',
         features: [
-            'Everything in Free, PLUS:',
-            '♾️ Unlimited Order Blocks',
-            '📊 Higher Timeframe OB/FVG Analysis',
-            '🎯 Fair Value Gaps + iFVG',
-            '💧 Liquidity Sweep Detection',
-            '🎯 ATR-based SL/TP Levels',
-            '⚡ Silver Bullet & Power Hour',
-            '🔮 Alpha Edge A+ Strategies',
-            '📈 Multi-Timeframe Trend Table',
-            '🔄 Lifetime Updates',
+            '🦁 RBFX v8.4 Beast Mode (Pine Script)',
+            '🫧 RBFX Volume Companion v1.0',
+            '♾️ Unlimited Order Blocks + FVGs',
+            '📊 HTF Confluence Analysis (1H)',
+            '💧 Liquidity Sweeps + Suspension Blocks',
+            '🎯 Silver Bullet + Power Hour',
+            '🔮 Fractal Filter + Alpha Strategies',
+            '📈 Volume Profile + HVN Lines',
+            '🔥 Killzone-Anchored Profiles',
+            '🔄 Full Source Code Access',
             '💬 Discord Community Access',
         ],
         highlighted: true,
-        badge: 'MOST POPULAR',
-        cta: 'Get Premium',
+        badge: '🚀 LAUNCH SPECIAL',
+        cta: 'Download Pine Scripts',
         ctaVariant: 'primary',
     },
 ];
+
 
 const faqItems = [
     {
@@ -194,7 +195,7 @@ export default function PricingPage() {
                                     </ul>
 
                                     {/* CTA */}
-                                    {tier.name === 'Free' ? (
+                                    {tier.name === 'MT5 Free' ? (
                                         <a
                                             href="/downloads/RetailBeastFX_Free.mq5"
                                             download
@@ -205,12 +206,36 @@ export default function PricingPage() {
                                             </svg>
                                             {tier.cta}
                                         </a>
+                                    ) : tier.name === 'TradingView Suite' ? (
+                                        <div className="space-y-2">
+                                            <a
+                                                href="https://www.tradingview.com/script/sQnHziDO-RetailBeastFX-Premium-v8-1/"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="glow-button glow-button--primary w-full justify-center flex items-center gap-2"
+                                            >
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                </svg>
+                                                RBFX Premium on TradingView
+                                            </a>
+                                            <a
+                                                href="https://www.tradingview.com/script/X2x02lIJ-RetailBeastFX-Volume-Beast-Mode/"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="glow-button glow-button--outline w-full justify-center flex items-center gap-2"
+                                            >
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                </svg>
+                                                Volume Companion on TradingView
+                                            </a>
+                                        </div>
                                     ) : (
                                         <GlowButton
-                                            href="https://whop.com/retailbeastfx/retailbeastfx-premium"
+                                            href="#"
                                             variant={tier.ctaVariant}
                                             className="w-full justify-center"
-                                            external
                                         >
                                             {tier.cta}
                                         </GlowButton>
