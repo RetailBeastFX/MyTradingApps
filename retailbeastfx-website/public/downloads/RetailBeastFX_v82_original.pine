@@ -938,13 +938,13 @@ if show1stFVG and bar_index > 2 and not foundFirstFVGToday and isOpeningRange an
         foundFirstFVGToday := true
         float fvgTop1st = low
         float fvgBottom1st = high[2]
-        firstPresentedFVGBox := box.new(bar_index - 1, fvgTop1st, bar_index + 200, fvgBottom1st, border_color=firstFVGColor, border_width=2, border_style=line.style_solid, bgcolor=firstFVGColor, text="1st FVG", text_color=color.new(#FFD700, 0), text_size=size.small, text_halign=text.align_left, text_valign=text.align_center)
+        firstPresentedFVGBox := box.new(bar_index - 1, fvgTop1st, bar_index + 200, fvgBottom1st, border_color=firstFVGColor, border_width=2, border_style=line.style_solid, bgcolor=firstFVGColor, text="1st FVG", text_color=color.new(#FFD700, 0), text_size=size.small, text_halign=text.align_right, text_valign=text.align_center)
     
     if bearFVG1st and bearGap1st >= minGapSize1st and bearBreaksRange and not foundFirstFVGToday
         foundFirstFVGToday := true
         float fvgTop1st = low[2]
         float fvgBottom1st = high
-        firstPresentedFVGBox := box.new(bar_index - 1, fvgTop1st, bar_index + 200, fvgBottom1st, border_color=firstFVGColor, border_width=2, border_style=line.style_solid, bgcolor=firstFVGColor, text="1st FVG", text_color=color.new(#FFD700, 0), text_size=size.small, text_halign=text.align_left, text_valign=text.align_center)
+        firstPresentedFVGBox := box.new(bar_index - 1, fvgTop1st, bar_index + 200, fvgBottom1st, border_color=firstFVGColor, border_width=2, border_style=line.style_solid, bgcolor=firstFVGColor, text="1st FVG", text_color=color.new(#FFD700, 0), text_size=size.small, text_halign=text.align_right, text_valign=text.align_center)
 
 // Keep extending the box right edge as long as we're in the trading day
 if not na(firstPresentedFVGBox) and shouldExtend
