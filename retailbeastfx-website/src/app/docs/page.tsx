@@ -14,6 +14,7 @@ const docSections = [
         title: 'ICT Framework',
         links: [
             { href: '#ict-confluence', label: 'ICT Confluence Model' },
+            { href: '#first-presented-fvg', label: '1st Presented FVG' },
             { href: '#suspension-blocks', label: 'Suspension Blocks' },
             { href: '#bb-extremes', label: 'BB 2.0 Extremes' },
             { href: '#mtf-analysis', label: 'Multi-Timeframe Analysis' },
@@ -246,6 +247,45 @@ export default function DocsPage() {
                                             <li>• <span className="text-beast-green">Bullish SB:</span> Wait for MSS in discount zone → retrace to SB → buy on support</li>
                                             <li>• <span className="text-red-400">Bearish SB:</span> Wait for MSS in premium zone → retrace to SB → sell on resistance</li>
                                             <li>• SL: Beyond the SB candle or recent swing</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </section>
+
+                            {/* 1st Presented FVG */}
+                            <section id="first-presented-fvg" className="mb-16">
+                                <h2 className="heading-cyber text-2xl text-white mb-6">1st Presented FVG</h2>
+                                <div className="prose prose-invert max-w-none">
+                                    <p className="text-gray-300 mb-4">
+                                        The <span className="text-beast-green font-semibold">1st Presented FVG</span> is the first Fair Value Gap that forms after the NY market opens at 9:30 AM within the Opening Range (until 10:00 AM). It acts as a key daily reference level.
+                                    </p>
+
+                                    <div className="glass-card rounded-xl p-6 my-6">
+                                        <h4 className="text-white font-semibold mb-4">Time Window</h4>
+                                        <ul className="space-y-2 text-gray-300">
+                                            <li>• <span className="text-beast-green">Start:</span> 9:30 AM NY (market open)</li>
+                                            <li>• <span className="text-beast-green">End:</span> 10:00 AM NY (Opening Range closes)</li>
+                                            <li>• <span className="text-beast-green">Earliest FVG:</span> 9:31 AM candle</li>
+                                            <li>• <span className="text-beast-green">Display Until:</span> 3:45 PM NY</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="glass-card rounded-xl p-6 my-6">
+                                        <h4 className="text-white font-semibold mb-4">Validation Rule</h4>
+                                        <p className="text-gray-300 mb-3">The FVG candle must <strong>break the range</strong> of previous candles to qualify:</p>
+                                        <ul className="space-y-2 text-gray-300">
+                                            <li>• <span className="text-beast-green">Bullish:</span> FVG candle high &gt; previous candles high</li>
+                                            <li>• <span className="text-red-400">Bearish:</span> FVG candle low &lt; previous candles low</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="glass-card rounded-xl p-6 my-6">
+                                        <h4 className="text-white font-semibold mb-4">How to Trade</h4>
+                                        <ul className="space-y-2 text-gray-300">
+                                            <li>• Use as a <span className="text-beast-green">PD-Array</span> for trade execution</li>
+                                            <li>• Watch for price to retrace and react to the zone</li>
+                                            <li>• Can become an <span className="text-beast-green">iFVG</span> (inverse) if mitigated</li>
+                                            <li>• Strongest when aligned with HTF bias</li>
                                         </ul>
                                     </div>
                                 </div>
