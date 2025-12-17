@@ -2,12 +2,16 @@
 // © RetailBeast 2025
 
 //@version=5
-indicator("RetailBeastFX Premium [v8.3 Alpha Edge]", shorttitle="RBFX v8.3", overlay=true, max_bars_back=500, max_lines_count=500, max_boxes_count=500, max_labels_count=500, dynamic_requests=true)
+indicator("RetailBeastFX Premium [v8.4 Beast Mode]", shorttitle="RBFX v8.4", overlay=true, max_bars_back=500, max_lines_count=500, max_boxes_count=500, max_labels_count=500, dynamic_requests=true)
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ 🚀 QUICK START ███
 // ══════════════════════════════════════════════════════════════════════════════
 string modeGroup = "🚀 Quick Start"
+
+string presetTooltip = "🔥 BEAST MODE: High-prob killzone setups only (Gold/USDJPY/NAS100)\n📈 SWING: 24/7 with HTF bias\n✨ CLEAN: Minimal visuals\n⚙️ CUSTOM: Your settings"
+string preset = input.string("🔥 Beast Mode", "Preset", options=["🔥 Beast Mode", "📈 Swing Trader", "✨ Clean Chart", "⚙️ Custom"], group=modeGroup, tooltip=presetTooltip)
+
 string modeTooltip = "SCALPER: London/NY killzones only (best for beginners)\nDAY TRADER: Extended hours\nSWING: 24/7 with EMA 200 filter"
 string gameMode = input.string("SCALPER", "Trading Mode", options=["SCALPER", "DAY TRADER", "SWING"], group=modeGroup, tooltip=modeTooltip)
 
@@ -67,7 +71,7 @@ bool showIFVG = input.bool(false, "Show iFVG", group=smcGroup, tooltip="Inverse 
 bool deleteFVGOnMitigation = input.bool(true, "Auto-Remove Filled FVGs", group=smcGroup)
 int maxFVGCount = input.int(3, "Max FVGs", minval=1, maxval=10, group=smcGroup)
 
-bool showSB = input.bool(false, "Suspension Blocks", group=smcGroup, tooltip="ICT 2025: Dual-imbalance pause zones")
+bool showSB = input.bool(true, "Suspension Blocks", group=smcGroup, tooltip="ICT 2025: Dual-imbalance pause zones")
 int sbLookback = input.int(50, "SB Lookback", minval=10, maxval=200, group=smcGroup)
 float sbMinGapATR = input.float(0.1, "SB Min Gap (ATR x)", minval=0.05, maxval=0.5, step=0.05, group=smcGroup)
 int maxSBCount = input.int(3, "Max SBs", minval=1, maxval=10, group=smcGroup)
@@ -86,8 +90,8 @@ bool showPDHL = input.bool(true, "Previous Day H/L", group=levelsGroup, tooltip=
 bool showWeeklyOpen = input.bool(true, "Weekly Open", group=levelsGroup)
 bool showMidnightOpen = input.bool(true, "Midnight Open", group=levelsGroup, tooltip="ICT True Day reference (00:00 EST)")
 bool showSessionOpens = input.bool(true, "Session Opens", group=levelsGroup, tooltip="London & NY opening prices")
-bool showSilverBullet = input.bool(false, "Silver Bullet Zone", group=levelsGroup, tooltip="10-11 AM EST high probability window")
-bool showLiqSweeps = input.bool(false, "Liquidity Sweeps", group=levelsGroup, tooltip="Detect stop hunts")
+bool showSilverBullet = input.bool(true, "Silver Bullet Zone", group=levelsGroup, tooltip="10-11 AM EST high probability window")
+bool showLiqSweeps = input.bool(true, "Liquidity Sweeps", group=levelsGroup, tooltip="Detect stop hunts")
 bool extendLevelLines = input.bool(false, "Extend Lines Right", group=levelsGroup)
 bool showTS = input.bool(false, "Turtle Soup", group=levelsGroup, tooltip="False breakout pattern (ICT)")
 int tsLookback = input.int(20, "TS Lookback", minval=5, maxval=50, group=levelsGroup)
@@ -109,13 +113,13 @@ string advGroup = "🔬 Advanced"
 string displayMode = input.string("Present", "Display Mode", options=["Present", "Historical"], group=advGroup, tooltip="Present=Recent only, Historical=Full history")
 int presentLookback = input.int(50, "Present Mode Bars", minval=10, maxval=500, group=advGroup)
 
-bool showHTFLevels = input.bool(false, "HTF Confluence", group=advGroup, tooltip="Show higher timeframe OBs/FVGs")
+bool showHTFLevels = input.bool(true, "HTF Confluence", group=advGroup, tooltip="Show higher timeframe OBs/FVGs")
 string htfTimeframe = input.timeframe("60", "HTF Timeframe", group=advGroup, tooltip="60=1H, 240=4H, D=Daily")
 bool showHTFOrderBlocks = input.bool(true, "HTF Order Blocks", group=advGroup)
 bool showHTFFVG = input.bool(true, "HTF Fair Value Gaps", group=advGroup)
 int maxHTFOB = input.int(2, "Max HTF OBs", minval=1, maxval=5, group=advGroup)
 int maxHTFFVG = input.int(2, "Max HTF FVGs", minval=1, maxval=5, group=advGroup)
-bool fractalFilter = input.bool(false, "Fractal Filter", group=advGroup, tooltip="Only signals near HTF levels")
+bool fractalFilter = input.bool(true, "Fractal Filter", group=advGroup, tooltip="Only signals near HTF levels - cuts fakeouts")
 float fractalATRMult = input.float(1.0, "Fractal Proximity (ATR x)", minval=0.5, maxval=3.0, step=0.5, group=advGroup)
 
 int alphaRSIPeriod = input.int(2, "RSI Period", minval=1, maxval=14, group=advGroup, tooltip="For Mean Reversion strategy")
@@ -1513,12 +1517,13 @@ if showDashboard
     
     // Header - Retail Beast FX Branding (matching logo)
     table.cell(dashboard, 0, 0, "🦁", text_color=color.new(#00FF00, 0), text_size=size.small, text_halign=text.align_center)
-    table.cell(dashboard, 1, 0, "RETAIL BEAST FX v8.3", text_color=color.new(#00FF00, 0), text_size=size.small, text_halign=text.align_left)
+    table.cell(dashboard, 1, 0, "RETAIL BEAST FX v8.4", text_color=color.new(#00FF00, 0), text_size=size.small, text_halign=text.align_left)
     
-    // Mode
+    // Mode & Preset
     table.cell(dashboard, 0, 1, "MODE", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
     modeColor = gameMode == "SCALPER" ? color.lime : gameMode == "DAY TRADER" ? color.orange : color.aqua
-    table.cell(dashboard, 1, 1, gameMode, text_color=modeColor, text_size=size.tiny, text_halign=text.align_left)
+    string modeDisplay = preset == "🔥 Beast Mode" ? gameMode + " 🔥" : gameMode
+    table.cell(dashboard, 1, 1, modeDisplay, text_color=modeColor, text_size=size.tiny, text_halign=text.align_left)
     
     // Alpha Edge Strategy (NEW)
     table.cell(dashboard, 0, 2, "ALPHA EDGE", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
