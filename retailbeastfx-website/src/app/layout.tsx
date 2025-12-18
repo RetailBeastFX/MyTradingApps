@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Orbitron, Inter } from "next/font/google";
 import "./globals.css";
 import { Header, Footer } from "@/components/Marketing";
+import { Providers } from "@/components/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -76,12 +77,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${inter.variable} antialiased bg-black text-white`}
       >
-        <Header />
-        <main className="pt-16 md:pt-20">
-          {children}
-        </main>
-        <Footer />
+        <Providers>
+          <Header />
+          <main className="pt-16 md:pt-20">
+            {children}
+          </main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
 }
+
