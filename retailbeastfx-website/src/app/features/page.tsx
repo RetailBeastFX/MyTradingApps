@@ -81,9 +81,18 @@ export default function FeaturesPage() {
             <section className="section-padding bg-cyber-dark">
                 <div className="container-wide mx-auto">
                     <div className="text-center mb-12">
-                        <h2 className="heading-cyber text-3xl md:text-4xl text-white mb-4">
-                            The <span className="text-beast-green">Indicator</span> Tools
-                        </h2>
+                        <div className="flex items-center justify-center gap-4 mb-4">
+                            <Image
+                                src="/indicator-icon.jpg"
+                                alt="RetailBeastFX Indicator"
+                                width={64}
+                                height={64}
+                                className="rounded-xl shadow-lg shadow-beast-green/40"
+                            />
+                            <h2 className="heading-cyber text-3xl md:text-4xl text-white">
+                                The <span className="text-beast-green">Indicator</span> Tools
+                            </h2>
+                        </div>
                         <p className="text-gray-400 max-w-2xl mx-auto">
                             TradingView-native tools built on real ICT/SMC principles. No repainting. No lag.
                         </p>

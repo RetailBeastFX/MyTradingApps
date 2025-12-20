@@ -114,10 +114,16 @@ export default function HomePage() {
                 {/* Card Header */}
                 <div className="relative z-10 flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 rounded-full bg-beast-green" />
-                    <span className="text-beast-green font-semibold">RetailBeastFX Indicator</span>
+                    <Image
+                      src="/indicator-icon.jpg"
+                      alt="RetailBeastFX Indicator"
+                      width={40}
+                      height={40}
+                      className="rounded-lg shadow-lg shadow-beast-green/30"
+                    />
+                    <span className="text-beast-green font-bold text-lg">RetailBeastFX Indicator</span>
                   </div>
-                  <span className="text-xs text-gray-500">TradingView + MT5</span>
+                  <span className="text-xs text-gray-400 bg-cyber-dark/50 px-2 py-1 rounded">TradingView + MT5</span>
                 </div>
 
                 {/* Features List */}
