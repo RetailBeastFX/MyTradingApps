@@ -185,6 +185,9 @@ if hugeVol and inRange and labelSpikes and showBubbles
 // Delta background tint
 bgcolor(effectiveShowDelta and showDeltaBG ? (deltaPositive ? color.new(bullColor, 95) : color.new(bearColor, 95)) : na, title="Delta Tint")
 
+// Delta Line (cumulative delta visualization)
+plot(effectiveShowDelta and showDeltaLine ? cumDeltaSmooth : na, "Cumulative Delta", color=cumDeltaSmooth > cumDeltaSmooth[1] ? bullColor : bearColor, linewidth=2, display=display.pane)
+
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ VOLUME PROFILE (On Last Bar) ███
 // ══════════════════════════════════════════════════════════════════════════════
