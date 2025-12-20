@@ -1,17 +1,17 @@
-// RetailBeastFX Volume Companion [v1.0 Beast Mode]
+// RetailBeastFX Volume Companion [v1.1 Beast Mode]
 // Based on BigBeluga's Liquidity Spectrum Visualizer
-// Enhanced with session-anchored profiles & SMC confluence
+// Enhanced with session-anchored profiles, delta proxy & SMC confluence
 // © RetailBeast 2025 | CC BY-NC-SA 4.0
 
 //@version=5
-indicator("RetailBeastFX Volume [Beast Mode]", shorttitle="RBFX Vol", overlay=true, max_boxes_count=500, max_labels_count=500)
+indicator("RetailBeastFX Volume [Beast Mode]", shorttitle="RBFX Vol 1.1", overlay=true, max_boxes_count=500, max_labels_count=500, max_lines_count=500)
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ 🚀 QUICK START ███
 // ══════════════════════════════════════════════════════════════════════════════
 string modeGroup = "🚀 Quick Start"
-string presetTooltip = "🔥 BEAST MODE: Killzone-anchored profiles\n📈 FULL RANGE: 200-bar lookback\n✨ CLEAN: Bubbles only\n⚙️ CUSTOM: Your settings"
-string preset = input.string("🔥 Beast Mode", "Preset", options=["🔥 Beast Mode", "📈 Full Range", "✨ Clean", "⚙️ Custom"], group=modeGroup, tooltip=presetTooltip)
+string presetTooltip = "🔥 BEAST MODE: Killzone-anchored profiles\n📈 MATRIX MODE: Heavy London/SB weighting + Delta\n📊 FULL RANGE: 200-bar lookback\n✨ CLEAN: Bubbles only\n⚙️ CUSTOM: Your settings"
+string preset = input.string("🔥 Beast Mode", "Preset", options=["🔥 Beast Mode", "📈 Matrix Mode", "📊 Full Range", "✨ Clean", "⚙️ Custom"], group=modeGroup, tooltip=presetTooltip)
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ 📊 VOLUME PROFILE ███
@@ -31,12 +31,24 @@ float volThreshold = input.float(1.5, "Spike Threshold (σ)", minval=0.5, maxval
 bool labelSpikes = input.bool(true, "Label Huge Spikes", group=bubbleGroup)
 
 // ══════════════════════════════════════════════════════════════════════════════
+// ███ 📈 DELTA PROXY ███
+// ══════════════════════════════════════════════════════════════════════════════
+string deltaGroup = "📈 Delta Proxy"
+bool showDelta = input.bool(false, "Enable Delta Proxy", group=deltaGroup, tooltip="Estimate buy/sell volume based on candle direction")
+bool showDeltaLine = input.bool(true, "Show Delta Line", group=deltaGroup)
+bool showDeltaBG = input.bool(false, "Delta Background Tint", group=deltaGroup, tooltip="Subtle background color based on cumulative delta")
+int deltaLookback = input.int(50, "Delta Lookback", minval=10, maxval=200, group=deltaGroup)
+
+// ══════════════════════════════════════════════════════════════════════════════
 // ███ 💧 LIQUIDITY LEVELS ███
 // ══════════════════════════════════════════════════════════════════════════════
 string liqGroup = "💧 Liquidity Levels"
 bool showLiqLevels = input.bool(true, "Show HVN Lines", group=liqGroup)
 int hvnThreshold = input.int(30, "HVN Threshold (%)", minval=10, maxval=50, group=liqGroup, tooltip="Volume node strength to display")
 bool extendHVN = input.bool(true, "Extend Lines Right", group=liqGroup)
+bool showPOC = input.bool(true, "Show POC Line", group=liqGroup, tooltip="Point of Control - highest volume level")
+bool showValueArea = input.bool(true, "Show VAH/VAL", group=liqGroup, tooltip="Value Area High/Low (70% of volume)")
+int valueAreaPercent = input.int(70, "Value Area %", minval=50, maxval=90, group=liqGroup)
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ ⏰ SESSION SETTINGS (BEAST MODE) ███
@@ -46,6 +58,14 @@ string londonSession = input.session("0300-0600", "London (EST)", group=sessGrou
 string nySession = input.session("0800-1100", "New York (EST)", group=sessGroup)
 string silverBulletSession = input.session("1000-1100", "Silver Bullet (EST)", group=sessGroup)
 bool highlightKillzones = input.bool(true, "Highlight Killzone Nodes", group=sessGroup)
+float londonWeight = input.float(1.5, "London Weight", minval=1.0, maxval=3.0, step=0.1, group=sessGroup, tooltip="Matrix Mode uses 2.0x")
+float sbWeight = input.float(1.5, "Silver Bullet Weight", minval=1.0, maxval=3.0, step=0.1, group=sessGroup, tooltip="Matrix Mode uses 2.5x")
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ 🔔 ALERTS ███
+// ══════════════════════════════════════════════════════════════════════════════
+string alertGroup = "🔔 Alerts"
+float alertThreshold = input.float(150, "Surge Alert Threshold (%)", minval=100, maxval=300, group=alertGroup, tooltip="% of average volume to trigger alert")
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ 🎨 APPEARANCE ███
@@ -53,7 +73,39 @@ bool highlightKillzones = input.bool(true, "Highlight Killzone Nodes", group=ses
 string visGroup = "🎨 Appearance"
 color bullColor = input.color(#22b16c, "Bull Color", group=visGroup, inline="colors")
 color bearColor = input.color(#dd7e2a, "Bear Color", group=visGroup, inline="colors")
+color pocColor = input.color(#FFD700, "POC Color", group=visGroup, inline="colors2")
+color vaColor = input.color(#9C27B0, "Value Area Color", group=visGroup, inline="colors2")
 int profileOffset = input.int(-50, "Profile Offset", minval=-200, maxval=0, group=visGroup)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ PRESET APPLICATION ███
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Apply preset overrides
+var float effectiveLondonWeight = londonWeight
+var float effectiveSBWeight = sbWeight
+var bool effectiveShowDelta = showDelta
+var bool effectiveShowPOC = showPOC
+var bool effectiveShowVA = showValueArea
+
+if preset == "📈 Matrix Mode"
+    effectiveLondonWeight := 2.0
+    effectiveSBWeight := 2.5
+    effectiveShowDelta := true
+    effectiveShowPOC := true
+    effectiveShowVA := true
+else if preset == "📊 Full Range"
+    effectiveLondonWeight := 1.0
+    effectiveSBWeight := 1.0
+else if preset == "✨ Clean"
+    effectiveLondonWeight := 1.0
+    effectiveSBWeight := 1.0
+else
+    effectiveLondonWeight := londonWeight
+    effectiveSBWeight := sbWeight
+    effectiveShowDelta := showDelta
+    effectiveShowPOC := showPOC
+    effectiveShowVA := showValueArea
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ CALCULATIONS ███
@@ -80,9 +132,31 @@ bool normalVol = nVol >= 2 and nVol < 3
 bool largeVol = nVol >= 3 and nVol < 4
 bool hugeVol = nVol >= 4
 
+// Surge detection (percentage-based)
+float volPercent = volSma > 0 ? (volume / volSma) * 100 : 0
+bool isSurge = volPercent >= alertThreshold
+
 // Candle direction color
 color candleColor = close > open ? bullColor : bearColor
 color gradientColor = color.from_gradient(nVol, 0, 5, color.new(candleColor, 50), candleColor)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ DELTA PROXY CALCULATION ███
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Buy/Sell volume estimation based on candle direction
+float buyVol = close > open ? volume : close < open ? 0 : volume * 0.5
+float sellVol = close < open ? volume : close > open ? 0 : volume * 0.5
+
+// Bar delta (positive = buyers aggressive, negative = sellers aggressive)
+float barDelta = buyVol - sellVol
+
+// Cumulative delta over lookback
+float cumDelta = ta.cum(barDelta)
+float cumDeltaSmooth = ta.sma(cumDelta, 10)
+
+// Delta direction for current bar
+bool deltaPositive = barDelta > 0
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ VOLUME BUBBLES ███
@@ -105,8 +179,20 @@ if hugeVol and inRange and labelSpikes and showBubbles
     label.new(bar_index, hlc3, volText, xloc.bar_index, yloc.price, color.new(#000000, 50), label.style_label_center, lblColor, size.small)
 
 // ══════════════════════════════════════════════════════════════════════════════
+// ███ DELTA PROXY DISPLAY ███
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Delta background tint
+bgcolor(effectiveShowDelta and showDeltaBG ? (deltaPositive ? color.new(bullColor, 95) : color.new(bearColor, 95)) : na, title="Delta Tint")
+
+// ══════════════════════════════════════════════════════════════════════════════
 // ███ VOLUME PROFILE (On Last Bar) ███
 // ══════════════════════════════════════════════════════════════════════════════
+
+// Persistent arrays for POC/VA
+var float pocPrice = na
+var float vahPrice = na
+var float valPrice = na
 
 if barstate.islast and showVolumeProfile
     // Collect high/low range
@@ -126,7 +212,7 @@ if barstate.islast and showVolumeProfile
     for i = 0 to vpBins - 1
         array.set(bins, i, 0.0)
     
-    // Fill bins with volume
+    // Fill bins with volume (session-weighted)
     for i = 0 to vpBins - 1
         float lower = rangeLow + step * i
         float upper = lower + step
@@ -134,21 +220,60 @@ if barstate.islast and showVolumeProfile
         for j = 0 to lookback - 1
             float c = close[j]
             if c >= lower - step and c <= upper + step
-                // Beast Mode: Weight killzone volume higher
-                float volWeight = (inKillzone[j] and highlightKillzones) ? volume[j] * 1.5 : volume[j]
+                // Beast/Matrix Mode: Weight session volume
+                float volWeight = volume[j]
+                if inSilverBullet[j] and highlightKillzones
+                    volWeight := volume[j] * effectiveSBWeight
+                else if inLondon[j] and highlightKillzones
+                    volWeight := volume[j] * effectiveLondonWeight
+                else if inNY[j] and highlightKillzones
+                    volWeight := volume[j] * effectiveLondonWeight
                 array.set(bins, i, array.get(bins, i) + volWeight)
     
     float maxBin = array.max(bins)
+    float totalVolume = array.sum(bins)
+    
+    // Find POC (Point of Control)
+    int pocIndex = array.indexof(bins, maxBin)
+    pocPrice := rangeLow + step * pocIndex + step / 2
+    
+    // Calculate Value Area (70% of volume)
+    float targetVol = totalVolume * valueAreaPercent / 100
+    float cumVol = array.get(bins, pocIndex)
+    int vaHighIndex = pocIndex
+    int vaLowIndex = pocIndex
+    
+    while cumVol < targetVol and (vaHighIndex < vpBins - 1 or vaLowIndex > 0)
+        float aboveVol = vaHighIndex < vpBins - 1 ? array.get(bins, vaHighIndex + 1) : 0
+        float belowVol = vaLowIndex > 0 ? array.get(bins, vaLowIndex - 1) : 0
+        
+        if aboveVol >= belowVol and vaHighIndex < vpBins - 1
+            vaHighIndex := vaHighIndex + 1
+            cumVol := cumVol + aboveVol
+        else if vaLowIndex > 0
+            vaLowIndex := vaLowIndex - 1
+            cumVol := cumVol + belowVol
+        else
+            break
+    
+    vahPrice := rangeLow + step * vaHighIndex + step
+    valPrice := rangeLow + step * vaLowIndex
     
     // Draw profile boxes and HVN lines
     var box[] vpBoxes = array.new_box()
     var line[] hvnLines = array.new_line()
+    var line pocLine = na
+    var line vahLine = na
+    var line valLine = na
     
     // Clean previous drawings
     for b in vpBoxes
         box.delete(b)
     for l in hvnLines
         line.delete(l)
+    line.delete(pocLine)
+    line.delete(vahLine)
+    line.delete(valLine)
     array.clear(vpBoxes)
     array.clear(hvnLines)
     
@@ -173,6 +298,18 @@ if barstate.islast and showVolumeProfile
             int rightExtend = extendHVN ? bar_index + 20 : bar_index + barWidth + profileOffset
             array.push(hvnLines, line.new(bar_index + profileOffset, mid, rightExtend, mid, color=lineColor, width=lineWidth))
     
+    // Draw POC line (solid, prominent)
+    if effectiveShowPOC and not na(pocPrice)
+        pocLine := line.new(bar_index + profileOffset, pocPrice, bar_index + 30, pocPrice, color=pocColor, width=2, style=line.style_solid)
+        label.new(bar_index + 32, pocPrice, "POC", style=label.style_label_left, color=color.new(pocColor, 50), textcolor=color.white, size=size.tiny)
+    
+    // Draw VAH/VAL lines (dashed)
+    if effectiveShowVA and not na(vahPrice) and not na(valPrice)
+        vahLine := line.new(bar_index + profileOffset, vahPrice, bar_index + 25, vahPrice, color=vaColor, width=1, style=line.style_dashed)
+        valLine := line.new(bar_index + profileOffset, valPrice, bar_index + 25, valPrice, color=vaColor, width=1, style=line.style_dashed)
+        label.new(bar_index + 27, vahPrice, "VAH", style=label.style_label_left, color=color.new(vaColor, 70), textcolor=color.white, size=size.tiny)
+        label.new(bar_index + 27, valPrice, "VAL", style=label.style_label_left, color=color.new(vaColor, 70), textcolor=color.white, size=size.tiny)
+    
     // Mark range extremes
     for j = 0 to lookback - 1
         if high[j] == rangeHigh
@@ -186,14 +323,25 @@ if barstate.islast and showVolumeProfile
 
 // Highlight when volume spike occurs during killzone (Beast Mode feature)
 bool killzoneSurge = inKillzone and (largeVol or hugeVol) and highlightKillzones
+bool londonSurge = inLondon and isSurge and highlightKillzones
+bool nySurge = inNY and isSurge and highlightKillzones
+bool silverBulletSurge = inSilverBullet and isSurge and highlightKillzones
+
 bgcolor(killzoneSurge ? color.new(#FFD700, 90) : na, title="Killzone Surge")
 
 // Plot hidden for alerts
 plot(killzoneSurge ? close : na, "Killzone Volume Surge", display=display.none)
+plot(londonSurge ? close : na, "London Surge", display=display.none)
+plot(nySurge ? close : na, "NY Surge", display=display.none)
+plot(silverBulletSurge ? close : na, "Silver Bullet Surge", display=display.none)
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ ALERTS ███
 // ══════════════════════════════════════════════════════════════════════════════
 
 alertcondition(hugeVol, title="Huge Volume Spike", message="🫧 RBFX Volume: Huge volume spike detected!")
-alertcondition(killzoneSurge, title="Killzone Volume Surge", message="🔥 RBFX Volume: Volume surge during killzone!")
+alertcondition(killzoneSurge, title="Killzone Volume Surge", message="🔥 RBFX Volume: Killzone surge detected! Log this setup in your journal.")
+alertcondition(londonSurge, title="London Session Surge", message="🇬🇧 RBFX Volume: London surge at {{close}}! Prime time for Trinity setups.")
+alertcondition(nySurge, title="New York Session Surge", message="🗽 RBFX Volume: NY surge at {{close}}! Check for OB/FVG confluence.")
+alertcondition(silverBulletSurge, title="Silver Bullet Surge", message="🎯 RBFX Volume: Silver Bullet surge at {{close}}! High-probability window - LOG THIS TRADE!")
+alertcondition(isSurge, title="Volume Surge (Custom)", message="📊 RBFX Volume: {{ticker}} surged {{volume}} ({{plot_0}}% of avg)")
