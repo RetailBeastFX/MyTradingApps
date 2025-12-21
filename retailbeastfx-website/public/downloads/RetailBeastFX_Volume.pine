@@ -265,6 +265,7 @@ if barstate.islast and showVolumeProfile
     // Draw profile boxes and HVN lines
     var box[] vpBoxes = array.new_box()
     var line[] hvnLines = array.new_line()
+    var label[] vpLabels = array.new_label()
     var line pocLine = na
     var line vahLine = na
     var line valLine = na
@@ -274,11 +275,14 @@ if barstate.islast and showVolumeProfile
         box.delete(b)
     for l in hvnLines
         line.delete(l)
+    for lbl in vpLabels
+        label.delete(lbl)
     line.delete(pocLine)
     line.delete(vahLine)
     line.delete(valLine)
     array.clear(vpBoxes)
     array.clear(hvnLines)
+    array.clear(vpLabels)
     
     for i = 0 to vpBins - 1
         float lower = rangeLow + step * i
@@ -304,21 +308,27 @@ if barstate.islast and showVolumeProfile
     // Draw POC line (solid, prominent)
     if effectiveShowPOC and not na(pocPrice)
         pocLine := line.new(bar_index + profileOffset, pocPrice, bar_index + 30, pocPrice, color=pocColor, width=2, style=line.style_solid)
-        label.new(bar_index + 32, pocPrice, "POC", style=label.style_label_left, color=color.new(pocColor, 50), textcolor=color.white, size=size.tiny)
+        array.push(vpLabels, label.new(bar_index + 32, pocPrice, "POC", style=label.style_label_left, color=color.new(pocColor, 50), textcolor=color.white, size=size.tiny))
     
     // Draw VAH/VAL lines (dashed)
     if effectiveShowVA and not na(vahPrice) and not na(valPrice)
         vahLine := line.new(bar_index + profileOffset, vahPrice, bar_index + 25, vahPrice, color=vaColor, width=1, style=line.style_dashed)
         valLine := line.new(bar_index + profileOffset, valPrice, bar_index + 25, valPrice, color=vaColor, width=1, style=line.style_dashed)
-        label.new(bar_index + 27, vahPrice, "VAH", style=label.style_label_left, color=color.new(vaColor, 70), textcolor=color.white, size=size.tiny)
-        label.new(bar_index + 27, valPrice, "VAL", style=label.style_label_left, color=color.new(vaColor, 70), textcolor=color.white, size=size.tiny)
+        array.push(vpLabels, label.new(bar_index + 27, vahPrice, "VAH", style=label.style_label_left, color=color.new(vaColor, 70), textcolor=color.white, size=size.tiny))
+        array.push(vpLabels, label.new(bar_index + 27, valPrice, "VAL", style=label.style_label_left, color=color.new(vaColor, 70), textcolor=color.white, size=size.tiny))
     
-    // Mark range extremes
+    // Mark range extremes (only first occurrence)
+    bool foundHigh = false
+    bool foundLow = false
     for j = 0 to lookback - 1
-        if high[j] == rangeHigh
-            label.new(bar_index - j, high[j], str.tostring(high[j], format.mintick), style=label.style_label_down, color=bearColor, textcolor=color.white, size=size.tiny)
-        if low[j] == rangeLow
-            label.new(bar_index - j, low[j], str.tostring(low[j], format.mintick), style=label.style_label_up, color=bullColor, textcolor=color.white, size=size.tiny)
+        if high[j] == rangeHigh and not foundHigh
+            array.push(vpLabels, label.new(bar_index - j, high[j], str.tostring(high[j], format.mintick), style=label.style_label_down, color=bearColor, textcolor=color.white, size=size.tiny))
+            foundHigh := true
+        if low[j] == rangeLow and not foundLow
+            array.push(vpLabels, label.new(bar_index - j, low[j], str.tostring(low[j], format.mintick), style=label.style_label_up, color=bullColor, textcolor=color.white, size=size.tiny))
+            foundLow := true
+        if foundHigh and foundLow
+            break
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ KILLZONE VOLUME SURGE DETECTION ███
