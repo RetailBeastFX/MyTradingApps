@@ -47,50 +47,51 @@ export default function HomePage() {
               {/* Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-beast-green/10 border border-beast-green/30 mb-6">
                 <span className="w-2 h-2 rounded-full bg-beast-green animate-pulse" />
-                <span className="text-sm text-beast-green font-medium">2025-Proof ICT/SMC Tool</span>
+                <span className="text-sm text-beast-green font-medium">ICT/SMC Indicator + Discipline Journal</span>
               </div>
 
               {/* Headline */}
               <h1 className="heading-cyber text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                <span className="text-white">Hunt Liquidity with</span>
+                <span className="text-white">Stop Guessing.</span>
                 <br />
-                <span className="gradient-text">Mechanical Precision</span>
+                <span className="gradient-text">Start Measuring.</span>
               </h1>
 
-              {/* Subheadline */}
+              {/* Subheadline - SPECIFIC */}
               <p className="text-xl md:text-2xl text-gray-300 mb-4">
-                <span className="text-beast-green font-semibold">Indicator + Journal</span> = Unbeatable Edge
+                What you <span className="text-beast-green font-semibold">actually get:</span>
               </p>
-              <p className="text-gray-400 mb-8 max-w-xl mx-auto lg:mx-0">
-                Fresh Order Blocks, Killzones, Quantum Lock™, and a mechanical trading journal
-                that turns your signals into consistent profits. No emotions. Just data.
-              </p>
+
+              {/* Value Props - EXPLICIT */}
+              <div className="space-y-3 mb-8 max-w-xl mx-auto lg:mx-0 text-left">
+                <div className="flex items-start gap-3">
+                  <span className="text-beast-green font-bold">▸</span>
+                  <p className="text-gray-300"><span className="text-white font-medium">Indicator</span> — Auto-marks Order Blocks, BB levels, Killzones, FVGs. One chart, no clutter.</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-beast-green font-bold">▸</span>
+                  <p className="text-gray-300"><span className="text-white font-medium">Journal</span> — Grades every trade. Punishes impulse entries. Shows which setups actually work.</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-red-400 font-bold">✕</span>
+                  <p className="text-gray-400"><span className="text-gray-300 font-medium">NOT for</span> — Gamblers, signal-chasers, or anyone unwilling to log trades.</p>
+                </div>
+              </div>
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
-                <GlowButton href="https://tradingview.com" external size="lg">
-                  Add to TradingView
+                <GlowButton href="/journal" size="lg">
+                  Try the Journal (Free)
                 </GlowButton>
-                <GlowButton href="/journal" variant="outline" size="lg">
-                  Launch Journal
+                <GlowButton href="/pricing" variant="outline" size="lg">
+                  Get Premium Indicator
                 </GlowButton>
               </div>
 
-              {/* Stats */}
-              <div className="flex flex-wrap gap-8 justify-center lg:justify-start">
-                <div className="text-center">
-                  <p className="text-3xl font-bold text-beast-green">2,500+</p>
-                  <p className="text-sm text-gray-400">Active Traders</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-3xl font-bold text-beast-gold">78%</p>
-                  <p className="text-sm text-gray-400">Avg Win Rate</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-3xl font-bold text-white">4.9★</p>
-                  <p className="text-sm text-gray-400">User Rating</p>
-                </div>
-              </div>
+              {/* Trust Signal - HONEST */}
+              <p className="text-sm text-gray-500">
+                ✓ Free journal, no signup required &nbsp;•&nbsp; ✓ Premium indicator optional &nbsp;•&nbsp; ✓ Built by a trader, for traders
+              </p>
             </div>
 
             {/* Right: Indicator Showcase with Mascot */}
@@ -310,10 +311,10 @@ export default function HomePage() {
         <div className="container-narrow mx-auto text-center relative z-10">
           <div className="glass-card rounded-3xl p-8 md:p-16 border-beast-green/20">
             <h2 className="heading-cyber text-3xl md:text-5xl text-white mb-4">
-              Ready to <span className="text-beast-green">Hunt Liquidity?</span>
+              Ready to <span className="text-beast-green">Trade with Discipline?</span>
             </h2>
             <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-              Join 2,500+ traders using RetailBeastFX to find high-probability setups and log trades with mechanical precision.
+              The indicator finds setups. The journal grades execution. Together, they force you to improve.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
