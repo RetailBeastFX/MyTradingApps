@@ -47,44 +47,41 @@ export default function HomePage() {
               {/* Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-beast-green/10 border border-beast-green/30 mb-6">
                 <span className="w-2 h-2 rounded-full bg-beast-green animate-pulse" />
-                <span className="text-sm text-beast-green font-medium">ICT/SMC Indicator + Discipline Journal</span>
+                <span className="text-sm text-beast-green font-medium">Tier-3 Execution Framework</span>
               </div>
 
-              {/* Headline */}
+              {/* Headline - HARD GATE */}
               <h1 className="heading-cyber text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                <span className="text-white">Stop Guessing.</span>
+                <span className="text-white">ONE SETUP. TWO SESSIONS.</span>
                 <br />
-                <span className="gradient-text">Start Measuring.</span>
+                <span className="gradient-text">ZERO FLEXIBILITY.</span>
               </h1>
 
-              {/* Subheadline - SPECIFIC */}
-              <p className="text-xl md:text-2xl text-gray-300 mb-4">
-                What you <span className="text-beast-green font-semibold">actually get:</span>
+              {/* Subheadline - AUTHORITY */}
+              <p className="text-xl md:text-2xl text-gray-300 mb-6">
+                Retail Beast is a Tier-3 execution framework for traders who accept they cannot beat institutions on speed — and stop trying.
               </p>
 
-              {/* Value Props - EXPLICIT */}
-              <div className="space-y-3 mb-8 max-w-xl mx-auto lg:mx-0 text-left">
-                <div className="flex items-start gap-3">
-                  <span className="text-beast-green font-bold">▸</span>
-                  <p className="text-gray-300"><span className="text-white font-medium">Indicator</span> — Auto-marks Order Blocks, BB levels, Killzones, FVGs. One chart, no clutter.</p>
+              {/* Immediate Rule Lock - NO ICONS */}
+              <div className="space-y-3 mb-8 max-w-xl mx-auto lg:mx-0">
+                <div className="border-l-2 border-beast-green pl-4">
+                  <p className="text-white font-medium">Trade only London & New York killzones</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-beast-green font-bold">▸</span>
-                  <p className="text-gray-300"><span className="text-white font-medium">Journal</span> — Grades every trade. Punishes impulse entries. Shows which setups actually work.</p>
+                <div className="border-l-2 border-beast-green pl-4">
+                  <p className="text-white font-medium">Trade only Trinity confluence (OB + BB 2.0 + EMA 8/21)</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-red-400 font-bold">✕</span>
-                  <p className="text-gray-400"><span className="text-gray-300 font-medium">NOT for</span> — Gamblers, signal-chasers, or anyone unwilling to log trades.</p>
+                <div className="border-l-2 border-red-400 pl-4">
+                  <p className="text-white font-medium">Miss one condition → no trade</p>
                 </div>
               </div>
 
-              {/* CTAs */}
+              {/* CTA - PERMISSION-BASED */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
                 <GlowButton href="/journal" size="lg">
-                  Try the Journal (Free)
+                  See If You're Even Allowed to Trade This
                 </GlowButton>
                 <GlowButton href="/pricing" variant="outline" size="lg">
-                  Get Premium Indicator
+                  View Requirements
                 </GlowButton>
               </div>
 
@@ -188,17 +185,62 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ==================== EXCLUSION SECTION ==================== */}
+      <section className="section-padding bg-cyber-dark/50 relative">
+        <div className="absolute inset-0 bg-grid opacity-20" />
+
+        <div className="container-narrow mx-auto relative z-10">
+          <div className="glass-card rounded-2xl p-8 md:p-12 border border-red-400/20">
+            <h2 className="heading-cyber text-3xl md:text-4xl text-white mb-6 text-center">
+              THIS IS <span className="text-red-400">NOT</span> FOR YOU IF —
+            </h2>
+
+            <div className="space-y-4 max-w-2xl mx-auto mb-8">
+              <div className="flex items-start gap-3">
+                <span className="text-red-400 font-bold text-xl">×</span>
+                <p className="text-gray-300">You need constant trades</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-red-400 font-bold text-xl">×</span>
+                <p className="text-gray-300">You trade Asia or random hours</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-red-400 font-bold text-xl">×</span>
+                <p className="text-gray-300">You want signals or alerts</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-red-400 font-bold text-xl">×</span>
+                <p className="text-gray-300">You change rules after losses</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-red-400 font-bold text-xl">×</span>
+                <p className="text-gray-300">You stack concepts to feel smart</p>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-700 pt-6">
+              <p className="text-lg text-white text-center max-w-xl mx-auto">
+                Retail Beast doesn't teach confidence.<br />
+                <span className="text-beast-green font-medium">It exposes whether you already have discipline.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ==================== JOURNAL SPOTLIGHT ==================== */}
       <section className="section-padding bg-cyber-dark relative overflow-hidden">
         <div className="absolute inset-0 bg-radial-glow opacity-30" />
 
         <div className="container-narrow mx-auto text-center relative z-10">
           <h2 className="heading-cyber text-3xl md:text-4xl text-white mb-4">
-            Log Your First <span className="text-beast-green">RBFX Signal</span> in Seconds
+            <span className="text-beast-green">The Journal</span> Is the Enforcer
           </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto mb-4">
+            <span className="text-white font-medium">Every violation is logged. Every deviation is visible.</span>
+          </p>
           <p className="text-gray-400 max-w-2xl mx-auto mb-8">
-            The RetailBeastFX Journal is your mechanical execution enforcer.
-            Analytics auto-update. Win rates calculate instantly. No emotions, just data.
+            You can't hide from your own behavior. The market doesn't forgive mistakes — the journal makes sure you don't forget them either.
           </p>
 
           <div className="glass-card rounded-2xl p-6 md:p-8 max-w-3xl mx-auto">
@@ -301,7 +343,42 @@ export default function HomePage() {
       </section>
 
 
+
       {/* Testimonials section removed - will add back when we have real customer reviews */}
+
+
+      {/* ==================== THE OATH (FINAL GATE) ==================== */}
+      <section className="section-padding bg-cyber-dark relative">
+        <div className="absolute inset-0 bg-grid opacity-20" />
+
+        <div className="container-narrow mx-auto text-center relative z-10">
+          <div className="glass-card rounded-2xl p-8 md:p-12 border border-beast-green/20">
+            <h2 className="heading-cyber text-3xl md:text-4xl text-white mb-8">
+              THE RETAIL BEAST OATH
+            </h2>
+
+            <div className="max-w-lg mx-auto space-y-4 mb-8 text-left">
+              <p className="text-lg text-gray-300 border-l-2 border-beast-green pl-4">
+                I will not trade without confluence.
+              </p>
+              <p className="text-lg text-gray-300 border-l-2 border-beast-green pl-4">
+                I will not trade outside killzones.
+              </p>
+              <p className="text-lg text-gray-300 border-l-2 border-beast-green pl-4">
+                I will not bend rules to feel better.
+              </p>
+            </div>
+
+            <p className="text-xl text-white font-medium mb-8">
+              No trade. No debate. No cope.
+            </p>
+
+            <GlowButton href="/journal" size="lg">
+              Enter Under These Rules
+            </GlowButton>
+          </div>
+        </div>
+      </section>
 
 
       {/* ==================== CTA SECTION ==================== */}
