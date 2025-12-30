@@ -1,5 +1,6 @@
 'use client';
 import { GlowButton } from '@/components/Marketing';
+import Link from 'next/link';
 
 export default function StartHerePage() {
     return (
@@ -60,32 +61,92 @@ export default function StartHerePage() {
                     </div>
                 </section>
 
-                {/* 3. THE PROBLEM IT SOLVES */}
+                {/* 3. THE GATES (WHAT & WHEN) */}
                 <section className="mb-12">
                     <div className="glass-card rounded-2xl p-8 border border-gray-700">
                         <h2 className="text-xl md:text-2xl text-white font-bold mb-6 flex items-center gap-3">
                             <span className="bg-gray-700 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
-                            THE PROBLEM IT SOLVES
+                            THE SYSTEM SCOPE
                         </h2>
-                        <div className="space-y-4 text-gray-300 text-lg">
-                            <p>“I understand ICT concepts, but I don't know <strong>when</strong> to enter.”</p>
-                            <p>“I keep hesitating and missing the move, or entering late and getting stopped out.”</p>
-                            <p>“Everything makes sense on the chart until it’s time to actually click the button.”</p>
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 className="text-beast-green font-bold mb-4">WHAT YOU TRADE</h3>
+                                <ul className="space-y-2 text-gray-300">
+                                    <li>• <strong className="text-white">EURUSD, GBPUSD</strong> (Clean structure)</li>
+                                    <li>• <strong className="text-white">XAUUSD (Gold)</strong> (Respects levels)</li>
+                                    <li className="text-sm text-gray-500 mt-2 italic">Why? Highest volume, cleanest delivery.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 className="text-beast-green font-bold mb-4">WHEN YOU TRADE</h3>
+                                <div className="space-y-3">
+                                    <div className="bg-cyber-dark p-3 rounded border border-gray-700">
+                                        <p className="text-white text-sm font-bold">LONDON KILLZONE</p>
+                                        <p className="text-gray-400 text-xs">02:00 – 05:00 ET</p>
+                                    </div>
+                                    <div className="bg-cyber-dark p-3 rounded border border-gray-700">
+                                        <p className="text-white text-sm font-bold">NEW YORK KILLZONE</p>
+                                        <p className="text-gray-400 text-xs">08:00 – 11:00 ET</p>
+                                    </div>
+                                    <p className="text-xs text-red-400 mt-2">Outside these times? Close charts.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* 4. WHAT THE FRAMEWORK ACTUALLY DOES */}
+                {/* 4. EXECUTION RULES */}
                 <section className="mb-12">
                     <div className="glass-card rounded-2xl p-8 border border-beast-gold/30 bg-beast-gold/5">
                         <h2 className="text-xl md:text-2xl text-white font-bold mb-6 flex items-center gap-3">
                             <span className="bg-beast-gold text-black w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span>
-                            WHAT THIS SYSTEM DOES
+                            EXECUTION RULES
                         </h2>
-                        <div className="text-center py-6">
-                            <p className="text-2xl md:text-3xl text-white font-bold leading-relaxed">
-                                RetailBeastFX does not predict direction.<br />
-                                It gives <span className="text-beast-green">permission to execute</span> when price fails.
+
+                        <div className="grid md:grid-cols-2 gap-8 mb-8">
+                            <div>
+                                <h3 className="text-white font-bold mb-4 border-b border-gray-700 pb-2">THE SETUP</h3>
+                                <p className="text-gray-300 mb-4">
+                                    We wait for <span className="text-white font-bold">Liquidity Sweep + Engulfing Return</span>.
+                                </p>
+                                <Link href="/mental-model" className="text-beast-green hover:underline text-sm">
+                                    See the One Candle Diagram →
+                                </Link>
+                            </div>
+                            <div>
+                                <h3 className="text-white font-bold mb-4 border-b border-gray-700 pb-2">THE MECHANICS</h3>
+                                <ul className="space-y-2 text-sm">
+                                    <li className="flex justify-between">
+                                        <span className="text-gray-400">ENTRY</span>
+                                        <span className="text-white font-bold">Candle Close</span>
+                                    </li>
+                                    <li className="flex justify-between">
+                                        <span className="text-gray-400">STOP</span>
+                                        <span className="text-white font-bold">Sweep Wick High/Low</span>
+                                    </li>
+                                    <li className="flex justify-between">
+                                        <span className="text-gray-400">TARGET</span>
+                                        <span className="text-white font-bold">Fixed 3R</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* ENTRY vs CONFIRMATION BOX */}
+                        <div className="bg-black/40 p-6 rounded-xl border border-gray-600">
+                            <div className="flex flex-col md:flex-row gap-8 items-center text-center md:text-left">
+                                <div className="flex-1">
+                                    <p className="text-beast-green font-bold text-lg mb-1">ENTRY = PRICE + CLOSE</p>
+                                    <p className="text-gray-400 text-sm">The candle triggers the trade. Nothing else.</p>
+                                </div>
+                                <div className="w-px h-12 bg-gray-700 hidden md:block"></div>
+                                <div className="flex-1">
+                                    <p className="text-beast-gold font-bold text-lg mb-1">CONFIRMATION = PERMISSION</p>
+                                    <p className="text-gray-400 text-sm">Indicators (BB/EMA) only say "Allowed".</p>
+                                </div>
+                            </div>
+                            <p className="mt-6 text-center text-white italic font-medium">
+                                "Indicators aren’t for prediction. They’re for permission. Price still triggers the trade."
                             </p>
                         </div>
                     </div>
@@ -94,7 +155,18 @@ export default function StartHerePage() {
                 {/* 5. WHAT TO DO NEXT */}
                 <section className="mb-16">
                     <h2 className="text-xl md:text-2xl text-white font-bold mb-8 text-center">
-                        5. WHAT TO DO NEXT
+                        5. DO NOT DO THIS
+                    </h2>
+                    <div className="max-w-2xl mx-auto mb-16 bg-red-500/10 border border-red-500/30 p-6 rounded-xl text-center">
+                        <ul className="space-y-2 text-gray-300 inline-block text-left">
+                            <li className="flex items-center gap-3"><span className="text-red-500 font-bold">×</span> No partials (All or nothing)</li>
+                            <li className="flex items-center gap-3"><span className="text-red-500 font-bold">×</span> No early entries (Wait for close)</li>
+                            <li className="flex items-center gap-3"><span className="text-red-500 font-bold">×</span> No HTF narrative guessing</li>
+                        </ul>
+                    </div>
+
+                    <h2 className="text-xl md:text-2xl text-white font-bold mb-8 text-center">
+                        6. WHAT TO DO NEXT
                     </h2>
 
                     <div className="grid md:grid-cols-3 gap-6">

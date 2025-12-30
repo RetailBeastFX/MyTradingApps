@@ -56,22 +56,34 @@ export default function HomePage() {
                 <br />
                 <span className="gradient-text">ZERO FLEXIBILITY.</span>
               </h1>
+              {/* Promise Line */}
+              <p className="text-lg text-beast-green mb-6 font-medium">
+                You don't predict direction. You execute failure during killzones.
+              </p>
 
               {/* Subheadline - AUTHORITY */}
               <p className="text-xl md:text-2xl text-gray-300 mb-6">
                 Retail Beast is a Tier-3 execution framework for traders who accept they cannot beat institutions on speed — and stop trying.
               </p>
 
-              {/* Immediate Rule Lock - NO ICONS */}
-              <div className="space-y-3 mb-8 max-w-xl mx-auto lg:mx-0">
-                <div className="border-l-2 border-beast-green pl-4">
-                  <p className="text-white font-medium">Trade only London & New York killzones</p>
-                </div>
-                <div className="border-l-2 border-beast-green pl-4">
-                  <p className="text-white font-medium">Trade only Trinity confluence (OB + BB 2.0 + EMA 8/21)</p>
-                </div>
-                <div className="border-l-2 border-red-400 pl-4">
-                  <p className="text-white font-medium">Miss one condition → no trade</p>
+              {/* SCOPE LOCK BOX */}
+              <div className="bg-cyber-dark p-6 rounded-xl border border-gray-700 mb-8 max-w-xl mx-auto lg:mx-0">
+                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+                  <span className="text-beast-gold">🔒</span> SCOPE LOCK (NON-NEGOTIABLE)
+                </h3>
+                <ul className="space-y-2 text-sm text-gray-300">
+                  <li className="flex items-center gap-2">
+                    <span className="text-beast-green">✓</span> FX Majors + Gold ONLY
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-beast-green">✓</span> London (02:00–05:00 ET) / NY (08:00–11:00 ET)
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-beast-green">✓</span> BB 20/1.0 Locked
+                  </li>
+                </ul>
+                <div className="mt-4 pt-3 border-t border-gray-700 text-xs text-gray-500 italic">
+                  Anything else is outside the system.
                 </div>
               </div>
 

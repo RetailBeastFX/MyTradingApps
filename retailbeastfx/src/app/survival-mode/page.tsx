@@ -34,9 +34,9 @@ export default function SurvivalModePage() {
                         <div className="flex gap-4">
                             <div className="text-3xl font-bold text-gray-700">01</div>
                             <div>
-                                <h3 className="text-white font-bold text-lg">Max Trades Per Day</h3>
-                                <p className="text-beast-green text-2xl font-bold font-mono">2 - 4 TRADES</p>
-                                <p className="text-sm text-gray-500 mt-1">If you take a 5th trade, you are gambling. Close the charts.</p>
+                                <h3 className="text-white font-bold text-lg">Max Trades</h3>
+                                <p className="text-beast-green text-2xl font-bold font-mono">1 TRADE PER SESSION</p>
+                                <p className="text-sm text-gray-500 mt-1">Or max 1 per day if you are tilting. Quality > Volume.</p>
                             </div>
                         </div>
 
@@ -44,9 +44,9 @@ export default function SurvivalModePage() {
                         <div className="flex gap-4">
                             <div className="text-3xl font-bold text-gray-700">02</div>
                             <div>
-                                <h3 className="text-white font-bold text-lg">Risk Per Trade</h3>
-                                <p className="text-beast-green text-2xl font-bold font-mono">0.5% - 1%</p>
-                                <p className="text-sm text-gray-500 mt-1">On a $50 account, this is $0.50 risk. Yes, it's boring. That's the point.</p>
+                                <h3 className="text-white font-bold text-lg">Risk Cap (Hard Dollars)</h3>
+                                <p className="text-beast-green text-2xl font-bold font-mono">$0.20 - $1.00 MAX</p>
+                                <p className="text-sm text-gray-500 mt-1">Do not think in percentages yet. Think in dollars. Maximum $1 loss.</p>
                             </div>
                         </div>
 
@@ -54,9 +54,9 @@ export default function SurvivalModePage() {
                         <div className="flex gap-4">
                             <div className="text-3xl font-bold text-gray-700">03</div>
                             <div>
-                                <h3 className="text-white font-bold text-lg">Daily Stop Loss</h3>
-                                <p className="text-red-400 text-2xl font-bold font-mono">MAX 3R LOSS</p>
-                                <p className="text-sm text-gray-500 mt-1">If you lose 3 units of risk, you are emotionally compromised. Walk away.</p>
+                                <h3 className="text-white font-bold text-lg">Stop Loss Cap</h3>
+                                <p className="text-red-400 text-2xl font-bold font-mono">TIGHT STOPS ONLY</p>
+                                <p className="text-sm text-gray-500 mt-1">If the stop requires >15 pips, skip the trade. Confluence is tight.</p>
                             </div>
                         </div>
 
@@ -67,8 +67,9 @@ export default function SurvivalModePage() {
                                 <h3 className="text-white font-bold text-lg">The "Kill Switch"</h3>
                                 <p className="text-gray-300">Trading stops immediately if:</p>
                                 <ul className="list-disc pl-5 text-gray-400 mt-2 space-y-1">
-                                    <li>You hit 2 full losses in a row.</li>
-                                    <li>You hit 1 clean win (2R+) and feel "euphoric".</li>
+                                    <li>You hit 2 losses in a day.</li>
+                                    <li>You hit 3 violations in 14 days (Journal Warning).</li>
+                                    <li>You hit 5 violations (Journal Lock).</li>
                                 </ul>
                             </div>
                         </div>
