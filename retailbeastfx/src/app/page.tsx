@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { GlowButton, FeatureCard, TestimonialCarousel } from '@/components/Marketing';
+import { GlowButton, FeatureCard } from '@/components/Marketing';
 
 // Icons for feature cards
 const IndicatorIcon = () => (
@@ -77,8 +77,8 @@ export default function HomePage() {
 
               {/* CTA - PERMISSION-BASED */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
-                <GlowButton href="/journal" size="lg">
-                  See If You're Even Allowed to Trade This
+                <GlowButton href="/start-here" size="lg">
+                  See If You&apos;re Even Allowed to Trade This
                 </GlowButton>
                 <GlowButton href="/pricing" variant="outline" size="lg">
                   View Requirements
@@ -220,7 +220,7 @@ export default function HomePage() {
 
             <div className="border-t border-gray-700 pt-6">
               <p className="text-lg text-white text-center max-w-xl mx-auto">
-                Retail Beast doesn't teach confidence.<br />
+                Retail Beast doesn&apos;t teach confidence.<br />
                 <span className="text-beast-green font-medium">It exposes whether you already have discipline.</span>
               </p>
             </div>
@@ -240,7 +240,7 @@ export default function HomePage() {
             <span className="text-white font-medium">Every violation is logged. Every deviation is visible.</span>
           </p>
           <p className="text-gray-400 max-w-2xl mx-auto mb-8">
-            You can't hide from your own behavior. The market doesn't forgive mistakes — the journal makes sure you don't forget them either.
+            You can&apos;t hide from your own behavior. The market doesn&apos;t forgive mistakes — the journal makes sure you don&apos;t forget them either.
           </p>
 
           <div className="glass-card rounded-2xl p-6 md:p-8 max-w-3xl mx-auto">

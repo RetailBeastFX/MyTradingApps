@@ -6,13 +6,13 @@ const footerLinks = {
         { href: '/features', label: 'Features' },
         { href: '/journal', label: 'Trading Journal' },
         { href: '/pricing', label: 'Pricing' },
-        { href: '/docs', label: 'Documentation' },
+        { href: '/start-here', label: 'Start Here Guide' },
     ],
     community: [
         { href: '/community', label: 'Discord' },
-        { href: '/blog', label: 'Blog' },
+        { href: '/survival-mode', label: 'Survival Mode ($20 Rule)' },
+        { href: '/mental-model', label: 'The One Candle' },
         { href: 'https://twitter.com/retailbeastfx', label: 'Twitter/X', external: true },
-        { href: '/about', label: 'About Us' },
     ],
     legal: [
         { href: '/privacy', label: 'Privacy Policy' },
