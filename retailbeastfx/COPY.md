@@ -1,4 +1,8 @@
-# RetailBeastFX Blog Series
+# RetailBeastFX Field Notes (Execution Logs)
+
+*Lived experience. Not guru theory.*
+
+---
 
 ## POST 1: “Why Most Traders Don’t Know When to Buy or Sell (Even After Learning ICT)”
 
@@ -24,6 +28,9 @@ RetailBeastFX exists to answer one question only:
 **“What candle gives me permission to act?”**
 
 No setup. No shot. No cope.
+
+> *“This mental model is enforced inside the RetailBeastFX Journal.”*
+> 👉 [retailbeastfxjournal.vercel.app](https://retailbeastfxjournal.vercel.app)
 
 ---
 
@@ -52,6 +59,9 @@ The **liquidity sweep → engulfing close** model is simple:
 **Close**
 This is why tight stops are logical — not reckless.
 
+> *“This mental model is enforced inside the RetailBeastFX Journal.”*
+> 👉 [retailbeastfxjournal.vercel.app](https://retailbeastfxjournal.vercel.app)
+
 ---
 
 ## POST 3: “Why Indicators Felt Confusing (And What To Do Instead)”
@@ -79,6 +89,9 @@ Indicators should **validate context**, not trigger action.
 **Close**
 RetailBeastFX demotes indicators from bosses to gatekeepers.
 
+> *“This mental model is enforced inside the RetailBeastFX Journal.”*
+> 👉 [retailbeastfxjournal.vercel.app](https://retailbeastfxjournal.vercel.app)
+
 ---
 
 ## POST 4: “Why Tight Stops Feel Scary — And Why They’re Correct”
@@ -104,6 +117,9 @@ This is why $20–$100 accounts can be trained *responsibly* — **not recklessl
 **Close**
 Survival comes from precision, not prediction.
 
+> *“This mental model is enforced inside the RetailBeastFX Journal.”*
+> 👉 [retailbeastfxjournal.vercel.app](https://retailbeastfxjournal.vercel.app)
+
 ---
 
 ## POST 5: “You’re Not Gambling — You’re Enforcing a Gate”
@@ -127,6 +143,9 @@ If any gate is closed → no trade.
 Trading becomes boring.
 Boring becomes consistent.
 
+> *“This mental model is enforced inside the RetailBeastFX Journal.”*
+> 👉 [retailbeastfxjournal.vercel.app](https://retailbeastfxjournal.vercel.app)
+
 ---
 
 ## POST 6: “How Many Times Should You Scalp in a Day?”
@@ -141,6 +160,9 @@ Boring becomes consistent.
 **Close**
 Overtrading is not ambition.
 It’s anxiety.
+
+> *“This mental model is enforced inside the RetailBeastFX Journal.”*
+> 👉 [retailbeastfxjournal.vercel.app](https://retailbeastfxjournal.vercel.app)
 
 ---
 
@@ -158,3 +180,6 @@ Defined risk is.
 
 **Close**
 The journal tracks **discipline**, not ego.
+
+> *“This mental model is enforced inside the RetailBeastFX Journal.”*
+> 👉 [retailbeastfxjournal.vercel.app](https://retailbeastfxjournal.vercel.app)
