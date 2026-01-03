@@ -88,7 +88,7 @@ export default function HomePage() {
               {/* Protocol Line */}
               <div className="mb-8 border-l-2 border-red-500 pl-4 py-1">
                 <p className="text-white font-medium italic">
-                  "No Setup. No Shot. No Cope. Accept or Exit."
+                  &quot;No Setup. No Shot. No Cope. Accept or Exit.&quot;
                 </p>
               </div>
 
@@ -271,7 +271,7 @@ export default function HomePage() {
                   Markets move to liquidity. We do not guess where. We wait for the trap, see the failure, and act on permission.
                 </p>
                 <p className="text-white font-medium italic text-sm border-l-2 border-beast-gold pl-3">
-                  "Price action explains WHY a level exists. The system decides IF you act."
+                  &quot;Price action explains WHY a level exists. The system decides IF you act.&quot;
                 </p>
               </div>
             </div>

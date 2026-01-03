@@ -36,7 +36,7 @@ export default function SurvivalModePage() {
                             <div>
                                 <h3 className="text-white font-bold text-lg">Max Trades</h3>
                                 <p className="text-beast-green text-2xl font-bold font-mono">1 TRADE PER SESSION</p>
-                                <p className="text-sm text-gray-500 mt-1">Or max 1 per day if you are tilting. Quality > Volume.</p>
+                                <p className="text-sm text-gray-500 mt-1">Or max 1 per day if you are tilting. Quality &gt; Volume.</p>
                             </div>
                         </div>
 
@@ -56,7 +56,7 @@ export default function SurvivalModePage() {
                             <div>
                                 <h3 className="text-white font-bold text-lg">Stop Loss Cap</h3>
                                 <p className="text-red-400 text-2xl font-bold font-mono">TIGHT STOPS ONLY</p>
-                                <p className="text-sm text-gray-500 mt-1">If the stop requires >15 pips, skip the trade. Confluence is tight.</p>
+                                <p className="text-sm text-gray-500 mt-1">If the stop requires &gt;15 pips, skip the trade. Confluence is tight.</p>
                             </div>
                         </div>
 
@@ -64,7 +64,7 @@ export default function SurvivalModePage() {
                         <div className="flex gap-4 border-t border-gray-700 pt-6">
                             <div className="text-3xl font-bold text-gray-700">04</div>
                             <div>
-                                <h3 className="text-white font-bold text-lg">The "Kill Switch"</h3>
+                                <h3 className="text-white font-bold text-lg">The &quot;Kill Switch&quot;</h3>
                                 <p className="text-gray-300">Trading stops immediately if:</p>
                                 <ul className="list-disc pl-5 text-gray-400 mt-2 space-y-1">
                                     <li>You hit 2 losses in a day.</li>

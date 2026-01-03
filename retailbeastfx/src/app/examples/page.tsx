@@ -26,7 +26,7 @@ export default function VisualEntryGuidePage() {
                         <p className="text-white text-lg font-medium mb-2">The One Rule to End Confusion:</p>
                         <ul className="space-y-2 text-gray-300">
                             <li><span className="text-red-500 font-bold">×</span> You do NOT enter at the Bollinger Band (Stretch)</li>
-                            <li><span className="text-red-500 font-bold">×</span> You do NOT enter "inside" the Order Block (Location)</li>
+                            <li><span className="text-red-500 font-bold">×</span> You do NOT enter &quot;inside&quot; the Order Block (Location)</li>
                             <li><span className="text-beast-green font-bold text-xl">✓</span> <span className="text-white font-bold">You enter on the candle CLOSE that proves price failed.</span></li>
                         </ul>
                     </div>
@@ -39,7 +39,7 @@ export default function VisualEntryGuidePage() {
                     <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                         <span className="text-beast-green">▲</span> LONG SETUP
                     </h2>
-                    <p className="text-gray-400 mb-8 text-lg font-mono">"Failure Down → Permission Up"</p>
+                    <p className="text-gray-400 mb-8 text-lg font-mono">&quot;Failure Down → Permission Up&quot;</p>
 
                     <div className="grid lg:grid-cols-2 gap-12">
                         {/* LEFT: TEXT RULES */}
@@ -49,7 +49,7 @@ export default function VisualEntryGuidePage() {
                                 <ol className="space-y-4 text-sm text-gray-300">
                                     <li className="pl-4 border-l-2 border-gray-700">
                                         <strong className="text-white block">1. Killzone Only</strong>
-                                        London (02-05 ET) or NY (08-11 ET). Outside? Don't look.
+                                        London (02-05 ET) or NY (08-11 ET). Outside? Don&apos;t look.
                                     </li>
                                     <li className="pl-4 border-l-2 border-gray-700">
                                         <strong className="text-white block">2. Bullsih OB Created</strong>
@@ -120,7 +120,7 @@ export default function VisualEntryGuidePage() {
                     <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
                         <span className="text-red-500">▼</span> SHORT SETUP
                     </h2>
-                    <p className="text-gray-400 mb-8 text-lg font-mono">"Failure Up → Permission Down"</p>
+                    <p className="text-gray-400 mb-8 text-lg font-mono">&quot;Failure Up → Permission Down&quot;</p>
 
                     <div className="grid lg:grid-cols-2 gap-12">
                         {/* LEFT: TEXT RULES */}

@@ -1,6 +1,5 @@
 'use client';
 import { GlowButton } from '@/components/Marketing';
-import Link from 'next/link';
 
 export default function PriceActionEyesPage() {
     return (
@@ -41,7 +40,7 @@ export default function PriceActionEyesPage() {
                             <div className="mt-4 md:mt-0">
                                 <h3 className="text-beast-gold text-sm font-bold uppercase mb-1">Our Observation Label</h3>
                                 <div className="bg-black/30 p-2 rounded border border-gray-600 inline-block">
-                                    <span className="text-gray-200 font-mono text-sm">"Liquidity Sweep Observed"</span>
+                                    <span className="text-gray-200 font-mono text-sm">&quot;Liquidity Sweep Observed&quot;</span>
                                 </div>
                             </div>
                         </div>
@@ -55,7 +54,7 @@ export default function PriceActionEyesPage() {
                             <div className="mt-4 md:mt-0">
                                 <h3 className="text-beast-gold text-sm font-bold uppercase mb-1">Our Observation Label</h3>
                                 <div className="bg-black/30 p-2 rounded border border-gray-600 inline-block">
-                                    <span className="text-gray-200 font-mono text-sm">"Structure Shift Observed"</span>
+                                    <span className="text-gray-200 font-mono text-sm">&quot;Structure Shift Observed&quot;</span>
                                 </div>
                             </div>
                         </div>
@@ -69,7 +68,7 @@ export default function PriceActionEyesPage() {
                             <div className="mt-4 md:mt-0">
                                 <h3 className="text-beast-gold text-sm font-bold uppercase mb-1">Our Observation Label</h3>
                                 <div className="bg-black/30 p-2 rounded border border-gray-600 inline-block">
-                                    <span className="text-gray-200 font-mono text-sm">"Inefficiency Present"</span>
+                                    <span className="text-gray-200 font-mono text-sm">&quot;Inefficiency Present&quot;</span>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +82,7 @@ export default function PriceActionEyesPage() {
                             <div className="mt-4 md:mt-0">
                                 <h3 className="text-beast-gold text-sm font-bold uppercase mb-1">Our Observation Label</h3>
                                 <div className="bg-black/30 p-2 rounded border border-gray-600 inline-block">
-                                    <span className="text-gray-200 font-mono text-sm">"Displacement Detected"</span>
+                                    <span className="text-gray-200 font-mono text-sm">&quot;Displacement Detected&quot;</span>
                                 </div>
                             </div>
                         </div>
