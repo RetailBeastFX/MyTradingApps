@@ -39,22 +39,21 @@ const pricingTiers: PricingTier[] = [
         name: 'TradingView Suite',
         price: '$0',
         period: 'limited time',
-        description: '🔥 Beast Mode Edition - FREE during launch!',
+        description: '🦁 v9.0 Institutional Mode - FREE during launch!',
         features: [
-            '🦁 RBFX v8.4 Beast Mode (Pine Script)',
-            '🫧 RBFX Volume Companion v1.0',
-            '♾️ Unlimited Order Blocks + FVGs',
-            '📊 HTF Confluence Analysis (1H)',
-            '💧 Liquidity Sweeps + Suspension Blocks',
-            '🎯 Silver Bullet + Power Hour',
-            '🔮 Fractal Filter + Alpha Strategies',
-            '📈 Volume Profile + HVN Lines',
-            '🔥 Killzone-Anchored Profiles',
+            '🦁 RBFX v9.0 Institutional (ADX Gate + SMC)',
+            '🐻 Volume Sentinel (Z-Score + Absorption)',
+            '🌐 Inter-Market Panel (AU/AG, USD/JPY, DXY)',
+            '🔥 APEX BEAST Signals (8+ Confluence)',
+            '📊 FVG + Order Blocks + Swing Detection',
+            '🎯 Killzones (London, NY, Silver Bullet)',
+            '📈 3x ATR Trailing + Confluence Score',
+            '⚡ 10+ Alert Conditions',
             '🔄 Full Source Code Access',
             '💬 Discord Community Access',
         ],
         highlighted: true,
-        badge: '🚀 LAUNCH SPECIAL',
+        badge: '🚀 v9.0 LAUNCH',
         cta: 'Download Pine Scripts',
         ctaVariant: 'primary',
     },
@@ -209,26 +208,24 @@ export default function PricingPage() {
                                     ) : tier.name === 'TradingView Suite' ? (
                                         <div className="space-y-2">
                                             <a
-                                                href="https://www.tradingview.com/script/sQnHziDO-RetailBeastFX-Premium-v8-1/"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
+                                                href="/downloads/Beast_Institutional_v9.pine"
+                                                download
                                                 className="glow-button glow-button--primary w-full justify-center flex items-center gap-2"
                                             >
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                                 </svg>
-                                                RBFX Premium on TradingView
+                                                🦁 v9.0 Institutional
                                             </a>
                                             <a
-                                                href="https://www.tradingview.com/script/X2x02lIJ-RetailBeastFX-Volume-Beast-Mode/"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
+                                                href="/downloads/RetailBeastFX_Volume_Sentinel.pine"
+                                                download
                                                 className="glow-button glow-button--outline w-full justify-center flex items-center gap-2"
                                             >
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                                 </svg>
-                                                Volume Companion on TradingView
+                                                🐻 Volume Sentinel
                                             </a>
                                         </div>
                                     ) : (
