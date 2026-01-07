@@ -294,55 +294,63 @@ export default function HomePage() {
             You can&apos;t hide from your own behavior. The market doesn&apos;t forgive mistakes — the journal makes sure you don&apos;t forget them either.
           </p>
 
+          {/* HONEST VALUE PROPS - No fake stats */}
           <div className="glass-card rounded-2xl p-6 md:p-8 max-w-3xl mx-auto">
-            <div className="aspect-[16/9] bg-cyber-surface rounded-xl border border-beast-green/20 overflow-hidden">
-              {/* Journal Preview Mockup */}
-              <div className="h-full flex flex-col">
-                {/* Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-cyber-border">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-beast-green animate-pulse" />
-                    <span className="text-sm text-white font-medium">Today&apos;s Trades</span>
-                  </div>
-                  <span className="text-xs text-beast-green font-bold">Win Rate: 72%</span>
-                </div>
+            <div className="grid md:grid-cols-2 gap-6 text-left mb-8">
+              {/* Left: What It Actually Does */}
+              <div>
+                <h3 className="text-beast-green font-bold mb-4 text-lg">What It Actually Does</h3>
+                <ul className="space-y-3 text-sm text-gray-300">
+                  <li className="flex items-start gap-2">
+                    <span className="text-beast-green mt-1">✓</span>
+                    <span>Logs every trade with entry, exit, and R-multiple</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-beast-green mt-1">✓</span>
+                    <span>Tracks violations against your own rules</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-beast-green mt-1">✓</span>
+                    <span>Shows which setups and sessions you actually win at</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-beast-green mt-1">✓</span>
+                    <span>Calculates real expectancy from your data</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-beast-green mt-1">✓</span>
+                    <span>Syncs with MetaTrader 4/5 and cTrader</span>
+                  </li>
+                </ul>
+              </div>
 
-                {/* Trade Rows */}
-                <div className="flex-1 overflow-hidden p-3 space-y-2">
-                  {[
-                    { pair: 'XAUUSD', dir: 'BUY', rr: '+2.5R', result: 'WIN', time: '9:32 AM' },
-                    { pair: 'EURUSD', dir: 'SELL', rr: '+1.8R', result: 'WIN', time: '10:15 AM' },
-                    { pair: 'NAS100', dir: 'BUY', rr: '-1R', result: 'LOSS', time: '11:02 AM' },
-                    { pair: 'USDJPY', dir: 'BUY', rr: '+3.2R', result: 'WIN', time: '2:45 PM' },
-                  ].map((trade, i) => (
-                    <div key={i} className="flex items-center justify-between bg-cyber-dark/50 rounded-lg px-3 py-2 text-sm">
-                      <div className="flex items-center gap-3">
-                        <span className="text-white font-medium">{trade.pair}</span>
-                        <span className={trade.dir === 'BUY' ? 'text-beast-green' : 'text-red-400'}>{trade.dir}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-gray-400 text-xs">{trade.time}</span>
-                        <span className={trade.result === 'WIN' ? 'text-beast-green font-bold' : 'text-red-400'}>{trade.rr}</span>
-                      </div>
-                    </div>
-                  ))}
+              {/* Right: The Uncomfortable Truth */}
+              <div>
+                <h3 className="text-beast-gold font-bold mb-4 text-lg">The Uncomfortable Truth</h3>
+                <div className="space-y-4 text-sm">
+                  <p className="text-gray-300">
+                    <span className="text-white font-medium">We don&apos;t promise win rates.</span> Your results depend entirely on your execution, not our tools.
+                  </p>
+                  <p className="text-gray-300">
+                    The journal reveals patterns — sometimes patterns you don&apos;t want to see.
+                  </p>
+                  <div className="bg-black/30 p-4 rounded-lg border border-gray-700">
+                    <p className="text-gray-400 italic text-xs">
+                      &quot;Lower win rate. Higher R:R. Smaller drawdowns. That&apos;s institutional math.&quot;
+                    </p>
+                  </div>
                 </div>
+              </div>
+            </div>
 
-                {/* Footer Stats */}
-                <div className="flex items-center justify-around px-4 py-3 border-t border-cyber-border bg-cyber-dark/30">
-                  <div className="text-center">
-                    <p className="text-beast-green font-bold">+6.5R</p>
-                    <p className="text-xs text-gray-500">Today</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-white font-bold">4</p>
-                    <p className="text-xs text-gray-500">Trades</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-beast-gold font-bold">3W / 1L</p>
-                    <p className="text-xs text-gray-500">Record</p>
-                  </div>
-                </div>
+            {/* Bottom: Real Features List */}
+            <div className="border-t border-gray-700 pt-6">
+              <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-500">
+                <span className="px-3 py-1 bg-cyber-dark/50 rounded-full">Trinity Matrix Heatmap</span>
+                <span className="px-3 py-1 bg-cyber-dark/50 rounded-full">Psychology Dashboard</span>
+                <span className="px-3 py-1 bg-cyber-dark/50 rounded-full">Risk of Ruin Calculator</span>
+                <span className="px-3 py-1 bg-cyber-dark/50 rounded-full">Monte Carlo Projections</span>
+                <span className="px-3 py-1 bg-cyber-dark/50 rounded-full">CSV + MT4/MT5 Import</span>
               </div>
             </div>
           </div>
