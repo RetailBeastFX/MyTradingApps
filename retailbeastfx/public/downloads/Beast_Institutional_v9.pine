@@ -439,9 +439,11 @@ bool bearCandle = close < open
 bool classicBuy = bullCandle and touchedLowerBB and bullTrend and validSession
 bool classicSell = bearCandle and touchedUpperBB and bearTrend and validSession
 
-// Institutional Mode Signals (ADX-gated + SMA bias)
+// Institutional Mode Signals (ADX-gated + bias filter)
+// BUY: Requires full bullish bias (above SMA50 + SMA200) - strict
+// SELL: Requires bearish EMA trend OR price below at least one SMA - more permissive for reversals
 bool instBuyFilter = adxGateOpen and bullishBias
-bool instSellFilter = adxGateOpen and bearishBias
+bool instSellFilter = adxGateOpen and (bearishBias or belowSMA50 or bearTrend)
 
 bool instBuy = classicBuy and instBuyFilter
 bool instSell = classicSell and instSellFilter
@@ -450,9 +452,23 @@ bool instSell = classicSell and instSellFilter
 bool rawBuySignal = institutionalMode ? instBuy : classicBuy
 bool rawSellSignal = institutionalMode ? instSell : classicSell
 
-// Anti-repaint: Confirmed bar only
-bool buySignal = rawBuySignal and barstate.isconfirmed
-bool sellSignal = rawSellSignal and barstate.isconfirmed
+// Signal Cooldown (prevent spam - 5 bar minimum between signals)
+var int lastBuyBar = na
+var int lastSellBar = na
+int signalCooldown = 5
+
+bool buyCooldownOk = na(lastBuyBar) or (bar_index - lastBuyBar >= signalCooldown)
+bool sellCooldownOk = na(lastSellBar) or (bar_index - lastSellBar >= signalCooldown)
+
+// Anti-repaint: Confirmed bar only + Cooldown
+bool buySignal = rawBuySignal and barstate.isconfirmed and buyCooldownOk
+bool sellSignal = rawSellSignal and barstate.isconfirmed and sellCooldownOk
+
+// Track last signal bar for cooldown
+if buySignal
+    lastBuyBar := bar_index
+if sellSignal
+    lastSellBar := bar_index
 
 // Confluence Scores
 float buyConfluence = buySignal ? calcConfluenceScore(true) : 0
