@@ -29,6 +29,25 @@ color surgeColor = input.color(color.new(#E040FB, 0), "Surge Color", group=visGr
 color absorbColor = input.color(color.new(#9C27B0, 85), "Absorption Color", group=visGroup)
 
 // ══════════════════════════════════════════════════════════════════════════════
+// ███ SMC-QUANT INTEGRATION (PILLAR I: ADX GATE) ███
+// ══════════════════════════════════════════════════════════════════════════════
+string adxGroup = "═══ 🎯 ADX GATE (Pillar I) ═══"
+bool useADXGate = input.bool(true, "Enable ADX Gate Filter", group=adxGroup, tooltip="Only highlight signals when ADX confirms trend strength")
+int adxLength = input.int(14, "ADX Length", minval=7, maxval=21, group=adxGroup)
+float adxThreshold = input.float(25.0, "ADX Threshold", minval=15.0, maxval=40.0, step=1.0, group=adxGroup, tooltip="ADX > 25 = tradable trend | ADX > 30 = super-trend")
+float adxPyramid = input.float(30.0, "Pyramid Threshold", minval=25.0, maxval=45.0, step=1.0, group=adxGroup, tooltip="ADX > 30 unlocks scale-in opportunities")
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ KILLZONE SESSION FILTER ███
+// ══════════════════════════════════════════════════════════════════════════════
+string kzGroup = "═══ ⏰ KILLZONE SESSIONS ═══"
+bool useKillzone = input.bool(false, "Filter to Killzones Only", group=kzGroup, tooltip="Only show signals during London/NY overlap")
+int londonStart = input.int(8, "London Start (EST)", minval=0, maxval=23, group=kzGroup)
+int londonEnd = input.int(11, "London End (EST)", minval=0, maxval=23, group=kzGroup)
+int nyStart = input.int(8, "NY Start (EST)", minval=0, maxval=23, group=kzGroup)
+int nyEnd = input.int(11, "NY End (EST)", minval=0, maxval=23, group=kzGroup)
+
+// ══════════════════════════════════════════════════════════════════════════════
 // ███ VOLUME CALCULATIONS ███
 // ══════════════════════════════════════════════════════════════════════════════
 float vol = volume
@@ -38,6 +57,24 @@ float zScore = stdVol != 0 ? (vol - avgVol) / stdVol : 0
 
 // Relative Volume
 float relVol = avgVol != 0 ? vol / avgVol : 1
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ ADX CALCULATION (PILLAR I GATE) ███
+// ══════════════════════════════════════════════════════════════════════════════
+[diPlus, diMinus, adxValue] = ta.dmi(adxLength, adxLength)
+bool adxGatePass = not useADXGate or adxValue >= adxThreshold
+bool isPyramidZone = adxValue >= adxPyramid
+bool isSuperTrend = adxValue >= 30.0
+string adxStatus = adxValue >= adxPyramid ? "🔥 SUPER" : adxValue >= adxThreshold ? "✅ TREND" : "⚠️ CHOP"
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ KILLZONE SESSION CHECK ███
+// ══════════════════════════════════════════════════════════════════════════════
+int currentHour = hour(time, "America/New_York")
+bool inLondonKZ = currentHour >= londonStart and currentHour < londonEnd
+bool inNYKZ = currentHour >= nyStart and currentHour < nyEnd
+bool inKillzone = inLondonKZ or inNYKZ
+bool killzonePass = not useKillzone or inKillzone
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ CUMULATIVE DELTA PROXY ███
@@ -58,7 +95,7 @@ float candleRange = high - low
 float avgBody = ta.sma(body, length)
 bool isHighVol = zScore >= zThreshAbsorb
 bool isSmallBody = candleRange > 0 ? body < candleRange * bodyRatio : false
-bool isAbsorption = isHighVol and isSmallBody
+bool isAbsorption = isHighVol and isSmallBody and adxGatePass and killzonePass
 
 // Absorption Type
 bool bullAbsorption = isAbsorption and close > open
@@ -67,18 +104,20 @@ bool bearAbsorption = isAbsorption and close < open
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ SURGE DETECTION ███
 // ══════════════════════════════════════════════════════════════════════════════
-bool isSurge = zScore >= zThreshHigh
+bool isSurge = zScore >= zThreshHigh and adxGatePass and killzonePass
 bool bullSurge = isSurge and close > open
 bool bearSurge = isSurge and close < open
 
 // ══════════════════════════════════════════════════════════════════════════════
-// ███ PARTICIPATION SCORE (0-10) ███
+// ███ PARTICIPATION SCORE (0-10) — SMC-QUANT ENHANCED ███
 // ══════════════════════════════════════════════════════════════════════════════
 float participationScore = 0.0
-participationScore += isSurge ? 5.0 : 0.0
-participationScore += isAbsorption ? 3.0 : 0.0
-participationScore += zScore >= 1.0 ? 1.0 : 0.0
-participationScore += relVol >= 1.5 ? 1.0 : 0.0
+participationScore += isSurge ? 4.0 : 0.0           // Volume surge
+participationScore += isAbsorption ? 2.0 : 0.0     // Absorption detected
+participationScore += zScore >= 1.0 ? 1.0 : 0.0    // Elevated volume
+participationScore += relVol >= 1.5 ? 1.0 : 0.0    // Relative volume spike
+participationScore += adxGatePass ? 1.0 : 0.0      // ADX gate passed (Pillar I)
+participationScore += isPyramidZone ? 1.0 : 0.0    // Pyramid zone (super-trend)
 participationScore := math.min(participationScore, 10.0)
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -154,47 +193,59 @@ if showVWAP and zScore >= 1.5 and barstate.isconfirmed
 // ███ DASHBOARD ███
 // ══════════════════════════════════════════════════════════════════════════════
 if showDashboard
-    var table volTable = table.new(position.top_right, 2, 7, bgcolor=color.new(#000000, 30), border_width=1, border_color=color.new(#9C27B0, 50))
+    var table volTable = table.new(position.top_right, 2, 9, bgcolor=color.new(#000000, 30), border_width=1, border_color=color.new(#9C27B0, 50))
     
     // Header
     table.cell(volTable, 0, 0, "🐻", text_color=color.new(#9C27B0, 0), text_size=size.normal, text_halign=text.align_center)
     table.cell(volTable, 1, 0, "VOLUME SENTINEL", text_color=color.new(#9C27B0, 0), text_size=size.small, text_halign=text.align_left)
     
+    // ADX Gate (Pillar I)
+    table.cell(volTable, 0, 1, "ADX", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    string adxText = str.tostring(adxValue, "#.#") + " " + adxStatus
+    color adxColor = isPyramidZone ? color.new(#FF6D00, 0) : adxGatePass ? color.new(#00E676, 0) : color.new(#FF5252, 0)
+    table.cell(volTable, 1, 1, adxText, text_color=adxColor, text_size=size.tiny, text_halign=text.align_left)
+    
     // Z-Score
-    table.cell(volTable, 0, 1, "Z-SCORE", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    table.cell(volTable, 0, 2, "Z-SCORE", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
     string zText = str.tostring(zScore, "#.##") + "σ"
     color zColor = isSurge ? color.new(#E040FB, 0) : zScore >= 1.0 ? color.new(#00E676, 0) : color.gray
-    table.cell(volTable, 1, 1, zText, text_color=zColor, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(volTable, 1, 2, zText, text_color=zColor, text_size=size.tiny, text_halign=text.align_left)
     
     // Relative Volume
-    table.cell(volTable, 0, 2, "REL VOL", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    table.cell(volTable, 0, 3, "REL VOL", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
     string rvolText = str.tostring(relVol, "#.##") + "x"
     color rvolColor = relVol >= 1.5 ? color.new(#00E676, 0) : color.gray
-    table.cell(volTable, 1, 2, rvolText, text_color=rvolColor, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(volTable, 1, 3, rvolText, text_color=rvolColor, text_size=size.tiny, text_halign=text.align_left)
     
     // Participation Score
-    table.cell(volTable, 0, 3, "SCORE", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    table.cell(volTable, 0, 4, "SCORE", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
     string scoreText = str.tostring(participationScore, "#") + "/10"
     color scoreColor = participationScore >= 8 ? color.new(#00FF00, 0) : participationScore >= 5 ? color.new(#FFD700, 0) : participationScore >= 3 ? color.new(#FF8C00, 0) : color.gray
-    table.cell(volTable, 1, 3, scoreText, text_color=scoreColor, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(volTable, 1, 4, scoreText, text_color=scoreColor, text_size=size.tiny, text_halign=text.align_left)
     
     // VWAP Deviation
-    table.cell(volTable, 0, 4, "VWAP DEV", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    table.cell(volTable, 0, 5, "VWAP DEV", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
     string vwapText = (vwapDev >= 0 ? "+" : "") + str.tostring(vwapDev, "#.##") + "%"
     color vwapColor = vwapDev > 0.5 ? color.new(#00BCD4, 0) : vwapDev < -0.5 ? color.new(#B71C1C, 0) : color.gray
-    table.cell(volTable, 1, 4, vwapText, text_color=vwapColor, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(volTable, 1, 5, vwapText, text_color=vwapColor, text_size=size.tiny, text_halign=text.align_left)
     
     // Status
-    table.cell(volTable, 0, 5, "STATUS", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
-    string statusText = isSurge ? "⚡ SURGE" : isAbsorption ? "🛡️ ABSORB" : "NORMAL"
-    color statusColor = isSurge ? surgeColor : isAbsorption ? color.new(#9C27B0, 0) : color.gray
-    table.cell(volTable, 1, 5, statusText, text_color=statusColor, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(volTable, 0, 6, "STATUS", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    string statusText = isSurge ? "⚡ SURGE" : isAbsorption ? "🛡️ ABSORB" : adxGatePass ? "READY" : "⏸️ WAIT"
+    color statusColor = isSurge ? surgeColor : isAbsorption ? color.new(#9C27B0, 0) : adxGatePass ? color.new(#00E676, 0) : color.gray
+    table.cell(volTable, 1, 6, statusText, text_color=statusColor, text_size=size.tiny, text_halign=text.align_left)
     
     // Delta Bias
-    table.cell(volTable, 0, 6, "DELTA", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    table.cell(volTable, 0, 7, "DELTA", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
     string deltaText = deltaBullish ? "📈 BUYERS" : deltaBearish ? "📉 SELLERS" : "NEUTRAL"
     color deltaColor = deltaBullish ? color.new(#00E676, 0) : deltaBearish ? color.new(#FF5252, 0) : color.gray
-    table.cell(volTable, 1, 6, deltaText, text_color=deltaColor, text_size=size.tiny, text_halign=text.align_left)
+    table.cell(volTable, 1, 7, deltaText, text_color=deltaColor, text_size=size.tiny, text_halign=text.align_left)
+    
+    // Killzone indicator
+    table.cell(volTable, 0, 8, "SESSION", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    string kzText = inKillzone ? "🎯 KILLZONE" : "OFF-HOURS"
+    color kzColor = inKillzone ? color.new(#FFD700, 0) : color.gray
+    table.cell(volTable, 1, 8, kzText, text_color=kzColor, text_size=size.tiny, text_halign=text.align_left)
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ███ ALERTS ███

@@ -1,0 +1,174 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © RetailBeast 2026
+
+//@version=6
+indicator("RetailBeastFX Inter-Market Panel", shorttitle="🌐 INTER-MKT", overlay=true)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ INTER-MARKET CORRELATION PANEL ███
+// ══════════════════════════════════════════════════════════════════════════════
+// Monitors: Gold/Silver Ratio, USD/JPY Carry, DXY Correlation
+// Built for 2026 macro regime awareness
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ INPUTS ███
+// ══════════════════════════════════════════════════════════════════════════════
+string panelGroup = "═══ 🌐 INTER-MARKET PANEL ═══"
+bool showPanel = input.bool(true, "Show Inter-Market Dashboard", group=panelGroup)
+bool showAlerts = input.bool(true, "Enable Correlation Alerts", group=panelGroup)
+int corrLength = input.int(20, "Correlation Lookback", minval=10, maxval=50, group=panelGroup)
+
+string threshGroup = "═══ THRESHOLDS ═══"
+float gsrHighThresh = input.float(85.0, "Gold/Silver Ratio High", minval=70, maxval=100, group=threshGroup, tooltip="Above 85 = risk-off, Silver underperforming")
+float gsrLowThresh = input.float(70.0, "Gold/Silver Ratio Low", minval=50, maxval=80, group=threshGroup, tooltip="Below 70 = risk-on, Silver outperforming")
+float jpyWarnThresh = input.float(155.0, "USD/JPY Carry Warning", minval=140, maxval=170, group=threshGroup, tooltip="Above 155 = carry fragility zone")
+float dxyBullThresh = input.float(105.0, "DXY Bullish Threshold", minval=100, maxval=115, group=threshGroup)
+
+string symbolGroup = "═══ SYMBOLS ═══"
+string goldSymbol = input.symbol("OANDA:XAUUSD", "Gold Symbol", group=symbolGroup)
+string silverSymbol = input.symbol("OANDA:XAGUSD", "Silver Symbol", group=symbolGroup)
+string jpySymbol = input.symbol("OANDA:USDJPY", "USD/JPY Symbol", group=symbolGroup)
+string dxySymbol = input.symbol("TVC:DXY", "DXY Symbol", group=symbolGroup)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ INTER-MARKET DATA ███
+// ══════════════════════════════════════════════════════════════════════════════
+// Fetch prices from other markets
+float goldPrice = request.security(goldSymbol, timeframe.period, close)
+float silverPrice = request.security(silverSymbol, timeframe.period, close)
+float jpyPrice = request.security(jpySymbol, timeframe.period, close)
+float dxyPrice = request.security(dxySymbol, timeframe.period, close)
+
+// Gold/Silver Ratio (GSR)
+float gsr = silverPrice != 0 ? goldPrice / silverPrice : na
+float gsrMA = ta.sma(gsr, corrLength)
+float gsrChange = gsr - gsr[5]
+
+// USD/JPY Analysis
+float jpyMA = ta.sma(jpyPrice, corrLength)
+float jpyChange = jpyPrice - jpyPrice[5]
+bool jpyCarryRisk = jpyPrice >= jpyWarnThresh
+
+// DXY Analysis
+float dxyMA = ta.sma(dxyPrice, corrLength)
+float dxyChange = dxyPrice - dxyPrice[5]
+bool dxyBullish = dxyPrice >= dxyBullThresh
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ CORRELATION CALCULATIONS ███
+// ══════════════════════════════════════════════════════════════════════════════
+// Gold vs DXY correlation (typically inverse)
+float goldReturns = (goldPrice - goldPrice[1]) / goldPrice[1]
+float dxyReturns = (dxyPrice - dxyPrice[1]) / dxyPrice[1]
+float goldDxyCorr = ta.correlation(goldReturns, dxyReturns, corrLength)
+
+// Gold vs JPY correlation
+float jpyReturns = (jpyPrice - jpyPrice[1]) / jpyPrice[1]
+float goldJpyCorr = ta.correlation(goldReturns, jpyReturns, corrLength)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ REGIME DETECTION ███
+// ══════════════════════════════════════════════════════════════════════════════
+// Risk-On: Silver outperforming (low GSR), weak DXY, stable JPY
+// Risk-Off: Gold outperforming (high GSR), strong DXY, JPY carry unwind
+
+bool riskOn = gsr < gsrLowThresh and not dxyBullish
+bool riskOff = gsr > gsrHighThresh and dxyBullish
+bool carryFragile = jpyCarryRisk and jpyChange < -1.0
+
+// Overall Regime
+string regimeText = carryFragile ? "⚠️ CARRY UNWIND" : riskOff ? "🔴 RISK-OFF" : riskOn ? "🟢 RISK-ON" : "⚪ NEUTRAL"
+color regimeColor = carryFragile ? color.new(#FF0000, 0) : riskOff ? color.new(#FF5252, 0) : riskOn ? color.new(#00E676, 0) : color.gray
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ GOLD BIAS FROM CORRELATIONS ███
+// ══════════════════════════════════════════════════════════════════════════════
+// Bullish Gold: DXY falling, JPY strengthening, Silver outperforming
+// Bearish Gold: DXY rising, JPY weakening, Silver underperforming
+
+int goldBias = 0
+goldBias += gsr < gsrMA ? 1 : gsr > gsrMA ? -1 : 0  // Silver outperforming = gold bullish
+goldBias += dxyPrice < dxyMA ? 1 : dxyPrice > dxyMA ? -1 : 0  // Weak DXY = gold bullish
+goldBias += jpyChange < 0 ? 1 : jpyChange > 0 ? -1 : 0  // JPY strengthening = gold bullish
+
+string goldBiasText = goldBias >= 2 ? "📈 BULLISH" : goldBias <= -2 ? "📉 BEARISH" : "↔️ MIXED"
+color goldBiasColor = goldBias >= 2 ? color.new(#00E676, 0) : goldBias <= -2 ? color.new(#FF5252, 0) : color.new(#FFD700, 0)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ DASHBOARD ███
+// ══════════════════════════════════════════════════════════════════════════════
+if showPanel
+    var table panel = table.new(position.bottom_left, 2, 9, bgcolor=color.new(#000000, 30), border_width=1, border_color=color.new(#00FFFF, 50))
+    
+    // Header
+    table.cell(panel, 0, 0, "🌐", text_color=color.new(#00FFFF, 0), text_size=size.normal, text_halign=text.align_center)
+    table.cell(panel, 1, 0, "INTER-MARKET", text_color=color.new(#00FFFF, 0), text_size=size.small, text_halign=text.align_left)
+    
+    // Regime
+    table.cell(panel, 0, 1, "REGIME", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    table.cell(panel, 1, 1, regimeText, text_color=regimeColor, text_size=size.tiny, text_halign=text.align_left)
+    
+    // Gold Bias
+    table.cell(panel, 0, 2, "GOLD BIAS", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    table.cell(panel, 1, 2, goldBiasText, text_color=goldBiasColor, text_size=size.tiny, text_halign=text.align_left)
+    
+    // Gold/Silver Ratio
+    table.cell(panel, 0, 3, "AU/AG", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    string gsrText = str.tostring(gsr, "#.#")
+    string gsrStatus = gsr > gsrHighThresh ? " 🔻" : gsr < gsrLowThresh ? " 🔺" : ""
+    color gsrColor = gsr > gsrHighThresh ? color.new(#FF5252, 0) : gsr < gsrLowThresh ? color.new(#00E676, 0) : color.gray
+    table.cell(panel, 1, 3, gsrText + gsrStatus, text_color=gsrColor, text_size=size.tiny, text_halign=text.align_left)
+    
+    // Silver Price
+    table.cell(panel, 0, 4, "SILVER", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    table.cell(panel, 1, 4, "$" + str.tostring(silverPrice, "#.##"), text_color=color.white, text_size=size.tiny, text_halign=text.align_left)
+    
+    // USD/JPY
+    table.cell(panel, 0, 5, "USD/JPY", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    string jpyStatus = jpyCarryRisk ? " ⚠️" : ""
+    color jpyColor = jpyCarryRisk ? color.new(#FF5252, 0) : color.white
+    table.cell(panel, 1, 5, str.tostring(jpyPrice, "#.##") + jpyStatus, text_color=jpyColor, text_size=size.tiny, text_halign=text.align_left)
+    
+    // DXY
+    table.cell(panel, 0, 6, "DXY", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    string dxyStatus = dxyBullish ? " 💪" : ""
+    color dxyColor = dxyBullish ? color.new(#00E676, 0) : color.white
+    table.cell(panel, 1, 6, str.tostring(dxyPrice, "#.##") + dxyStatus, text_color=dxyColor, text_size=size.tiny, text_halign=text.align_left)
+    
+    // Gold/DXY Correlation
+    table.cell(panel, 0, 7, "AU↔DXY", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    string corrText = str.tostring(goldDxyCorr, "#.##")
+    color corrColor = goldDxyCorr < -0.5 ? color.new(#00E676, 0) : goldDxyCorr > 0.5 ? color.new(#FF5252, 0) : color.gray
+    table.cell(panel, 1, 7, corrText, text_color=corrColor, text_size=size.tiny, text_halign=text.align_left)
+    
+    // Timestamp
+    table.cell(panel, 0, 8, "", text_color=color.gray, text_size=size.tiny, text_halign=text.align_right)
+    table.cell(panel, 1, 8, "© RetailBeastFX", text_color=color.new(#FFFFFF, 70), text_size=size.tiny, text_halign=text.align_left)
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ VISUAL WARNINGS ███
+// ══════════════════════════════════════════════════════════════════════════════
+// Background tint on regime change
+bgcolor(riskOff ? color.new(#FF5252, 95) : na, title="Risk-Off Warning")
+bgcolor(carryFragile ? color.new(#FF0000, 92) : na, title="Carry Unwind Alert")
+
+// Silver outperformance marker
+plotshape(gsr < gsrLowThresh and gsr[1] >= gsrLowThresh ? low : na, "Silver Breakout", shape.labelup, location.belowbar, color.new(#C0C0C0, 0), size=size.small, text="AG🚀")
+
+// Carry unwind warning
+plotshape(carryFragile and not carryFragile[1] ? high : na, "Carry Warning", shape.labeldown, location.abovebar, color.new(#FF0000, 0), size=size.small, text="¥⚠️")
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ ALERTS ███
+// ══════════════════════════════════════════════════════════════════════════════
+alertcondition(riskOn and not riskOn[1], title="Risk-On Regime", message="🟢 INTER-MARKET: Risk-On Regime Detected (Silver outperforming, DXY weak)")
+alertcondition(riskOff and not riskOff[1], title="Risk-Off Regime", message="🔴 INTER-MARKET: Risk-Off Regime Detected (Gold outperforming, DXY strong)")
+alertcondition(carryFragile and not carryFragile[1], title="Carry Unwind Warning", message="⚠️ INTER-MARKET: USD/JPY Carry Fragility - Potential unwind alert")
+alertcondition(gsr < gsrLowThresh and gsr[1] >= gsrLowThresh, title="Silver Breakout", message="🚀 INTER-MARKET: Silver Outperforming - Gold/Silver Ratio below 70")
+alertcondition(gsr > gsrHighThresh and gsr[1] <= gsrHighThresh, title="Gold Dominance", message="🥇 INTER-MARKET: Gold Outperforming - Risk-off signal")
+alertcondition(goldBias >= 2 and goldBias[1] < 2, title="Gold Bullish Confluence", message="📈 INTER-MARKET: Multi-Asset Gold Bullish Confluence")
+alertcondition(goldBias <= -2 and goldBias[1] > -2, title="Gold Bearish Confluence", message="📉 INTER-MARKET: Multi-Asset Gold Bearish Confluence")
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ███ END OF SCRIPT ███
+// ══════════════════════════════════════════════════════════════════════════════

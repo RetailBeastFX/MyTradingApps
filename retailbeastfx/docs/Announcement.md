@@ -1,121 +1,99 @@
-# 🦁 RetailBeastFX v9.0 — "The Institutional Pivot"
+# 🦁 RetailBeastFX v9.1 — "SMC-Quant Hybrid"
 
-**January 5, 2026**
-
----
-
-## What Just Happened?
-
-**Gold hit $4,429.**
-
-Not slowly. Not gradually. A geopolitical black swan (Venezuela, Maduro extraction) sent XAU/USD vertical while most "retail scalping" systems got chopped to pieces trying to catch the move.
-
-Meanwhile, traders using **regime detection** saw it coming: ADX(14) above 35, price well above 50/200 SMA, extreme conviction environment.
-
-**This is why we're pivoting.**
+**January 7, 2026**
 
 ---
 
-## The Truth About Win Rate
+## 🔥 What's New
 
-Let me be direct: We're dropping the "72% win rate" hype.
+### Volume Sentinel — Now with ADX Gate
 
-Here's what actually compounds capital:
+The **Volume Sentinel** indicator now integrates **Pillar I (ADX Gate)** from the SMC-Quant framework:
 
-| Metric | Classic Mode | Institutional Mode |
-|--------|:-------------:|:-------------------:|
-| **Win Rate** | ~55-60% | ~42-45% |
-| **Avg R:R** | 1:1.5 | **1:3.5+** |
-| **Max Drawdown** | 15-20% | **8-12%** |
-| **Sharpe Ratio** | 0.8-1.0 | **1.5-2.0** |
-| **2026 Fit** | ⚠️ High DD Risk | ✅ Regime-Aware |
-
-**Lower win rate. Higher expectancy. Smaller drawdowns.**
-
-That's institutional math.
+- **ADX Gate Toggle**: Signals only fire when ADX > 25 (trending market)
+- **Pyramid Zone**: ADX > 30 unlocks scale-in opportunities
+- **Killzone Session Filter**: Optionally restrict signals to London/NY overlap
+- **Enhanced Dashboard**: Live ADX status, killzone indicator, participation score
 
 ---
 
-## What's Changing
+### Journal — Full Gamification & Psychology
 
-### 🆕 Institutional Mode (Toggle)
+The **RetailBeastFX Journal** is now production-ready with major upgrades:
 
-- **ADX Engine Gate**: Signals hide unless ADX(14) > 25
-- **SMA Bias Filter**: Only trade with the regime (50/200 SMA alignment)
-- **Confluence Score**: 1-10 strength meter on every setup
-- **3x ATR Trailing**: Dynamic exits for asymmetric R:R
+| Feature | Details |
+|---------|---------|
+| **SMC-Quant Presets** | 14 setup types including Liquidity Sweep + OTE, ADX Gate Breakout, FVG Retracement, Order Blocks, Silver Bullet |
+| **Gamification System** | 10 levels (Rookie → Apex Predator), 16 achievements, XP based on discipline not P&L |
+| **Psychology Dashboard** | Emotion × Performance correlation, best/worst trading state detection |
+| **Trinity Matrix Heatmap** | Setup × Session with R-expectancy coloring, Gold Zones (E > 0.5R) |
+| **Risk of Ruin + Monte Carlo** | Professional equity projections with p10/p50/p90 bands |
+| **Export & Reports** | CSV download, PDF generation with full stats |
+| **Theme Toggle** | Dark/Light/System modes |
+| **Onboarding Tour** | Interactive walkthrough for new users |
 
-### 🔄 Classic Mode (Preserved)
-
-Everything you know still works. One toggle: `Institutional Mode = false`.
-
-No deletions. No forced migrations.
-
----
-
-## Why This Matters (January 2026 Context)
-
-**Current Market State:**
-
-- XAU/USD: $4,429-$4,448 (Venezuela fallout, haven bid)
-- USD/JPY: 156.79 (carry trade fragility)
-- XAG/USD: $76+ (outperforming Gold)
-- Daily ADX: **35+** (extreme conviction regime)
-
-This is exactly when fixed-target scalping gets crushed and regime-aware trailing captures the move.
-
-**Example Setup (Right Now):**
-
-- ADX > 25 ✅
-- Price > 50 SMA + 200 SMA ✅
-- Look for OTE retest around $4,390 for potential long
-- 2x ATR SL → 3x ATR trailing TP
+**👉 [rbfxjournal.vercel.app](https://rbfxjournal.vercel.app)**
 
 ---
 
-## 7-Day Institutional Mode Trial
+## SMC-Quant Hybrid Strategy (2026)
 
-**For journal users only.**
+The framework that powers everything:
 
-Connect your RetailBeastFX Journal account and get:
+| Pillar | Purpose | Implementation |
+|--------|---------|----------------|
+| **I. ADX Gate** | Trend confirmation | ADX > 25 = tradable, ADX > 30 = super-trend |
+| **II. SMA Alignment** | Direction bias | 50 EMA > 200 SMA = bullish only |
+| **III. SMC Precision** | Entry timing | Liquidity sweep → ChoCh → OB/FVG → OTE (62-79% fib) |
 
-- Full Institutional Mode access (Pine Script + risk calculator)
-- Private Discord channel for regime analysis
-- Daily ADX regime alerts
+### Setup Presets (Now in Journal)
 
-**👉 [retailbeastfxjournal.vercel.app](https://retailbeastfxjournal.vercel.app)**
+**Institutional:**
+
+- Liquidity Sweep + OTE
+- ADX Gate Breakout
+- FVG Retracement
+- Order Block Demand/Supply
+- Silver Bullet (10-11 AM / 2-3 PM EST)
+- MSS Reversal
+- ATR Pyramid Add
+
+**Classic:**
+
+- Breakout, Pullback, Reversal, Trend Continuation, Range Fade
 
 ---
 
-## The Vibe
+## Why This Matters
 
-> "We don't predict. We filter. We don't chase win rate. We compound R."
+**Current Market State (Jan 7, 2026):**
 
-Still aggressive. Still no-BS. Still Beast.
+- XAU/USD: $4,400+ range
+- ADX: 30+ (super-trend territory)
+- Volume Sentinel showing consistent institutional participation
 
-Just smarter.
+Pure SMC without regime filtering = whipsaws.  
+SMC + ADX Gate + Volume Confirmation = edge.
 
 ---
 
-**🦁 RetailBeastFX**
+## Coming Next
+
+- **Inter-market Confluence**: Gold/Silver ratio, DXY correlation
+- **Strategy Confluence Score**: Auto-calculated 1-10 based on Pillar alignment
+- **Mobile PWA**: Full offline support
+
+---
+
+**🦁 RetailBeastFX**  
 *From Retail Precision to Institutional Alpha*
 
 ---
 
-### Brand Updates
+**Links:**
 
-**Twitter/X Bio:**
-
-```
-Institutional Alpha Engine | ADX-Gated Regime Detection | 1:3.5+ Asymmetry | Built for 2026 Chaos 🦁
-```
-
-**YouTube Tagline:**
-
-```
-From Retail Precision to Institutional Alpha
-```
-
----
+- [Journal](https://rbfxjournal.vercel.app)
+- [Website](https://retailbeastfx.vercel.app)
+- [Discord](https://discord.gg/retailbeastfx)
 
 *Questions? Drop them in #general. We read everything.*
