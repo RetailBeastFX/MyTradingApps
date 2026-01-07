@@ -22,7 +22,7 @@ export default function JournalPage() {
 
                     <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
                         Log trades, track performance, and analyze your edge with the RetailBeastFX Journal.
-                        No emotions. Just data. Just profits.
+                        No emotions. Just data. Just execution.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -64,7 +64,7 @@ export default function JournalPage() {
                             Journal <span className="text-beast-green">Features</span>
                         </h2>
                         <p className="text-gray-400 max-w-2xl mx-auto">
-                            Everything you need to become a consistently profitable trader.
+                            Everything you need to track your edge and improve your execution.
                         </p>
                     </div>
 
@@ -176,10 +176,10 @@ export default function JournalPage() {
                 <div className="container-narrow mx-auto text-center">
                     <div className="glass-card rounded-3xl p-8 md:p-16 border-beast-green/20">
                         <h2 className="heading-cyber text-3xl md:text-4xl text-white mb-4">
-                            Track Your Way to <span className="text-beast-green">Profitability</span>
+                            Track Your Way to <span className="text-beast-green">Better Execution</span>
                         </h2>
                         <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-                            Join thousands of traders who&apos;ve improved their win rate by simply tracking and reviewing their trades.
+                            Traders who track their data make better decisions. See exactly what&apos;s working and what isn&apos;t.
                         </p>
                         <GlowButton href="https://retailbeastfxjournal.vercel.app/" external size="lg">
                             Start Journaling Free →
