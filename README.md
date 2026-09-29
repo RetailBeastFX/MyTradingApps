@@ -11,7 +11,7 @@
 
 ## Quick Start
 ```bash
-git clone https://github.com/AdaptiveQT/MyTradingApps.git
+git clone https://github.com/RetailBeastFX/MyTradingApps.git
 cd MyTradingApps
 pip install -r requirements.txt
 # See setup guide for configuration
