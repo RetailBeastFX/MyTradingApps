@@ -1,7 +1,1 @@
-{
-  "devDependencies": {
-    "autoprefixer": "^10.4.22",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.17"
-  }
-}
+{"description":"RetailBeastFX trading apps: ICT/SMC Pine Script indicators and strategies, MQL5 expert advisors, and Python backtesting tools.","name":"mytradingapps","private":true,"version":"1.0.0"}

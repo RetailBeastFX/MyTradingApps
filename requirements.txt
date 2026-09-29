@@ -1,0 +1,5 @@
+# Python dependencies for the rbfx_*.py backtesting and optimization scripts.
+# (Python 3.8+ per README; verified against numpy 1.26 / pandas 2.1 / yfinance 0.2.x)
+numpy>=1.24
+pandas>=2.0
+yfinance>=0.2.40
